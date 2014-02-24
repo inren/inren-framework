@@ -1,4 +1,4 @@
 inren-framework
 ===============
 
-New attempt for a hobby projet.
+New attempt for a hobby project.
