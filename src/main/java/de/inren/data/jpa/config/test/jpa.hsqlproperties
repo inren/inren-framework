@@ -1,0 +1,3 @@
+jpa.databasePlatform=org.hibernate.dialect.HSQLDialect
+jpa.showSql=false
+jpa.generateDdl=true

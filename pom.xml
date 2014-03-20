@@ -57,11 +57,25 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
 	<properties>
-		<wicket.version>6.14.0</wicket.version>
+		<!-- Versions sorted by name -->
+		<bonecp.version>0.8.0.RELEASE</bonecp.version>
+		<log4j.version>1.2.16</log4j.version>
+		<hibernate.version>4.3.4.Final</hibernate.version>
+		<hsqldb.version>2.3.2</hsqldb.version>
+		<java-melody.version>1.49.0</java-melody.version>
 		<jetty.version>7.6.13.v20130916</jetty.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<joda-time.version>2.3</joda-time.version>
+		<junit.version>4.11</junit.version>
+		<postgresql.version>9.1-901.jdbc4</postgresql.version>
+		<slf4j.version>1.6.4</slf4j.version>
+		<spring.version>4.0.2.RELEASE</spring.version>
+		<spring-data.version>1.5.0.RELEASE</spring-data.version>
+		<spring-security.version>3.2.2.RELEASE</spring-security.version>
+		<wicket.version>6.14.0</wicket.version>
+		
+		
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
 		<wtp.version>none</wtp.version>
 	</properties>
@@ -72,31 +86,191 @@
 			<artifactId>wicket-core</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
-		<!-- OPTIONAL DEPENDENCY
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-auth-roles</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-datetime</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-devutils</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-spring</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-extensions</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
-		-->
-
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-native-websocket-core</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-native-websocket-jetty</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-native-websocket-tomcat</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-bean-validation</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-objectsizeof-agent</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<!-- Spring -->
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-aop</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+			<version>${spring.version}</version>
+		</dependency>		
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-beans</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-context</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-core</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-web</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.springframework.data</groupId>
+	        <artifactId>spring-data-jpa</artifactId>
+	        <version>${spring-data.version}</version>
+	    </dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+			<version>${spring-security.version}</version>
+		</dependency>	
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-config</artifactId>
+		    <version>${spring-security.version}</version>
+	  	</dependency>			
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-test</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+	    <dependency>
+	        <groupId>org.springframework</groupId>
+	        <artifactId>spring-tx</artifactId>
+	        <version>${spring.version}</version>
+	    </dependency>
+	    <!-- Hibernate -->
+		<dependency>
+		    <groupId>org.hibernate</groupId>
+		    <artifactId>hibernate-entitymanager</artifactId>
+		    <version>${hibernate.version}</version>
+		</dependency>
+		<!-- Monitoring -->
+		<dependency>
+			<groupId>net.bull.javamelody</groupId>
+			<artifactId>javamelody-core</artifactId>
+			<version>${java-melody.version}</version>
+		</dependency>		
+        <!-- itext, option to add PDF export -->
+        <dependency>
+	         <groupId>com.lowagie</groupId>
+	         <artifactId>itext</artifactId>
+	         <version>2.1.7</version>
+	         <exclusions>
+	             <exclusion>
+	                 <artifactId>bcmail-jdk14</artifactId>
+	                 <groupId>bouncycastle</groupId>
+	             </exclusion>
+	             <exclusion>
+	                 <artifactId>bcprov-jdk14</artifactId>
+	                 <groupId>bouncycastle</groupId>
+	             </exclusion>
+	             <exclusion>
+	                 <artifactId>bctsp-jdk14</artifactId>
+	                 <groupId>bouncycastle</groupId>
+	             </exclusion>
+	         </exclusions>
+        </dependency>		
+        <!-- Database Testing -->
+		<dependency>
+			<groupId>org.hsqldb</groupId>
+			<artifactId>hsqldb</artifactId>
+			<version>${hsqldb.version}</version>
+		</dependency>
+		<!-- Database Production -->
+		<!-- 
+       <dependency>
+           <groupId>postgresql</groupId>
+           <artifactId>postgresql</artifactId>
+           <version>${postgresql.version}</version>
+       </dependency>
+        -->				
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.29</version>
+		</dependency>
+		<!-- bonecp -->
+		<dependency>
+			<groupId>com.jolbox</groupId>
+			<artifactId>bonecp</artifactId>
+			<version>${bonecp.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${joda-time.version}</version>
+		</dependency>	    
 		<!-- LOGGING DEPENDENCIES - LOG4J -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
-			<version>1.6.4</version>
+			<version>${slf4j.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
-			<version>1.2.16</version>
+			<version>${log4j.version}</version>
 		</dependency>
 
 		<!--  JUNIT DEPENDENCY FOR TESTING -->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.11</version>
+			<version>${junit.version}</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -148,8 +322,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.5.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.7</source>
+					<target>1.7</target>
 					<encoding>UTF-8</encoding>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
