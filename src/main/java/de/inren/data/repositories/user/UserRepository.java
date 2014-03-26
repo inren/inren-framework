@@ -9,5 +9,7 @@ import de.inren.data.domain.user.User;
  *
  */
 public interface UserRepository extends PagingAndSortingRepository<User, Long> {
+	
+	User findByUsername(String username);
 
 }

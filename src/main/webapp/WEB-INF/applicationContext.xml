@@ -14,7 +14,8 @@
 		classpath:de/inren/data/jpa/config/jpa.mysql.properties"
 	/>
 
-	<context:component-scan base-package="de.inren.dat.domain" />
+	<context:component-scan base-package="de.inren.data.domain" />
+	<context:component-scan base-package="de.inren.service" />
 	<import resource="repository.xml"/>
 	<import resource="infrastructure.xml"/>
 	<import resource="security.xml"/>

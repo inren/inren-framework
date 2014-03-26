@@ -1,36 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans
-	xmlns="http://www.springframework.org/schema/beans"
-	xmlns:sec="http://www.springframework.org/schema/security"
-	xmlns:p="http://www.springframework.org/schema/p" 
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:sec="http://www.springframework.org/schema/security" xmlns:p="http://www.springframework.org/schema/p"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="
 		http://www.springframework.org/schema/beans
 		http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
 		http://www.springframework.org/schema/security
 		http://www.springframework.org/schema/security/spring-security-3.2.xsd">
-		
-		
-	<sec:authentication-manager>
-		<sec:authentication-provider>
-			<sec:user-service>
-				<sec:user name="ingo" password="geheim" authorities="user, admin"/>
-			</sec:user-service>
-		</sec:authentication-provider>
-	</sec:authentication-manager>		
-		
-	<bean id="passwordEncoder" class="org.springframework.security.authentication.encoding.ShaPasswordEncoder" />
 
-	<bean id="saltSource" class="org.springframework.security.authentication.dao.ReflectionSaltSource"
-		p:userPropertyToUse="salt" />
 
-<!-- 
-	<sec:authentication-manager alias="authenticationManager">
-		<sec:authentication-provider user-service-ref="authenticationService">
-			<sec:password-encoder ref="passwordEncoder">
-				<sec:salt-source ref="saltSource"/>
-			</sec:password-encoder>
-		</sec:authentication-provider>
-	</sec:authentication-manager>
- -->
+	<sec:authentication-manager alias="authenticationManager"></sec:authentication-manager>
+	<!-- For hashing and salting user passwords -->
+	<bean id="encoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+
 </beans>
