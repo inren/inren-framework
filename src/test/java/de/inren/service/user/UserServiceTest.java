@@ -7,9 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import de.inren.data.domain.user.User;
 import de.inren.testsupport.InRenJUnit4SpringContextTests;
@@ -63,6 +60,7 @@ public class UserServiceTest extends InRenJUnit4SpringContextTests {
 		final String pwdOld = user.getPassword();
 		user.setPassword("tollesPwd");
 		User userSaved = userService.save(user);
+		assertTrue(!"tollesPwd".equals(userSaved.getPassword()));
 		assertTrue(!pwdOld.equals(userSaved.getPassword()));
 		User userNewPwd = userService.authenticateUser("admin@localhost", "tollesPwd");
 		assertNotNull(userNewPwd);
@@ -75,7 +73,6 @@ public class UserServiceTest extends InRenJUnit4SpringContextTests {
 	}
 	
 	@Test
-	@Rollback
 	public void testAuthenticateUser() {
 		// Default user is admin@localhost with password geheim.
 		final User user = userService.authenticateUser("admin@localhost", "geheim");
