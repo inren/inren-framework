@@ -10,15 +10,15 @@
 			">
 
 	<context:property-placeholder location="
-		classpath:de/inren/data/jpa/config/db.mysql.properties,
-		classpath:de/inren/data/jpa/config/jpa.mysql.properties"
+		classpath:de/inren/data/jpa/config/test/db.hsql.properties,
+		classpath:de/inren/data/jpa/config/test/jpa.hsql.properties"
 	/>
 
 	<context:component-scan base-package="de.inren.data.domain" />
 	<context:component-scan base-package="de.inren.service" />
 	<import resource="repository.xml"/>
 	<import resource="infrastructure.xml"/>
-	<import resource="security.xml"/>	
+	<import resource="security.xml"/>
 	<!--
 	<import resource="context.xml"/>
 	<import resource="wicket.xml"/>

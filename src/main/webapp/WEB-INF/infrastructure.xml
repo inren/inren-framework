@@ -21,6 +21,5 @@
         p:partitionCount="3"
         p:acquireIncrement="10"                              
         p:statementsCacheSize="50"
-        p:releaseHelperThreads="3"
 		destroy-method="close" />
 </beans>

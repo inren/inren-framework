@@ -49,8 +49,6 @@ public class UserServiceImpl implements UserService, Initializable {
 			log.info("UserService init start.");
 			roleService.init();
 			groupService.init();
-			roleService.init();
-			groupService.init();
 			List<User> users = (List<User>) userRepository.findAll();
 
 			if (users.isEmpty()) {

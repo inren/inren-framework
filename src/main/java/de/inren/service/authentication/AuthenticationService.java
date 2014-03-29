@@ -7,5 +7,5 @@ import de.inren.data.domain.user.User;
  *
  */
 public interface AuthenticationService {
-    User authenticateUser(String email, String password);
+    User authenticateUser(String ident, String password);
 }

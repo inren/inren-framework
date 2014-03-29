@@ -13,10 +13,11 @@
 
 	<!-- Instruct Spring to perform declarative transaction management automatically on annotated classes. -->
 	<tx:annotation-driven mode="aspectj" />
-
+	
 	<bean id="jpaVendorAdapter"
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
-		p:databasePlatform="${jpa.databasePlatform}" p:showSql="${jpa.showSql}"
+		p:databasePlatform="${jpa.databasePlatform}" 
+		p:showSql="${jpa.showSql}"
 		p:generateDdl="${jpa.generateDdl}" />
 
 	<bean id="entityManagerFactory"
@@ -24,20 +25,37 @@
 		<property name="dataSource" ref="dataSource" />
 		<!-- Where to find the entities. -->
 		<property name="packagesToScan" value="de.inren.data.domain" />
+		<property name="loadTimeWeaver">
+			<bean id="loadTimeWeaver" class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
+		</property>
+		<property name="PersistenceProvider">
+			<bean id="persistenceProvider" class="org.hibernate.jpa.HibernatePersistenceProvider" />	
+		</property>
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-		</property>
+		</property>		
 		<property name="jpaProperties">
 			<props>
 				<prop key="hibernate.hbm2ddl.auto">create-drop</prop>
-				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="showSql">true"</prop>
 			</props>
 		</property>
 	</bean>
 	<!-- Where to find the repositories. -->
 	<jpa:repositories base-package="de.inren.data.repositories" />
 
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
-		p:entityManagerFactory-ref="entityManagerFactory" />
-
+	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory" />
+        <property name="jpaDialect" ref="jpaDialect"></property>
+    </bean>
+    
+    <bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+	    <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+    
+    <bean id="jpaDialect" class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+    
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+        
 </beans>
