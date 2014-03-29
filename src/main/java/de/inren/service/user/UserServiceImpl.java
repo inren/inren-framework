@@ -86,14 +86,14 @@ public class UserServiceImpl implements UserService, Initializable {
 	}
 
 	@Override
-    @Transactional
+	@Transactional
     public User save(User user) {
         try {
             if (user.getId()==null) {
-                final User dbUser = userRepository.save(user);
-                dbUser.setPassword(passwordEncoder.encode(user.getPassword()));
-                log.info("creating new user: {}", user);
-                return userRepository.save(dbUser);
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                User u2 = userRepository.save(user);
+                log.info("created new user: {}", u2);                
+                return u2; 
             } else {
                 final User u = userRepository.findOne(user.getId());
                 if (user.getPassword() == null || "".equals(user.getPassword())
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService, Initializable {
                     log.info("updating user: {}", user);
                 } else {
                     user.setPassword(passwordEncoder.encode(user.getPassword()));
-                    log.info("updating user (new password): {}", user);
+                    log.info("updating user with new password: {}", user);
                 }
                 return userRepository.save(user);
             }
