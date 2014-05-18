@@ -1,29 +1,43 @@
+/**
+ * Copyright 2014 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package de.inren.data.domain.user;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Transient;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import de.inren.data.domain.group.Group;
-import de.inren.data.domain.role.Role;
+import de.inren.data.domain.security.AuthorizedDomainObject;
+import de.inren.data.domain.security.Role;
+
 /**
  * 
  * Just some user entity.
@@ -32,141 +46,194 @@ import de.inren.data.domain.role.Role;
  * 
  */
 @Entity
-public class User implements UserDetails, Serializable {
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+public class User extends AuthorizedDomainObject implements UserDetails {
 
-	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
-	private Long id;
-	
+    @Column(nullable = false)
+    private String email;
+
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String firstname;
+
+    @Column(nullable = false)
+    private String lastname;
+
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "User_Role", joinColumns = { @JoinColumn(name = "userId", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "roleId", referencedColumnName = "id") })
-    private Set<Role> roles;
+    @JoinTable(name = "user_groups", joinColumns = { @JoinColumn(name = "user_groups_userid", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "user_groups_groupid", referencedColumnName = "id") })
+    private Collection<Group> groups;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "User_Group", joinColumns = { @JoinColumn(name = "userId", referencedColumnName = "id") }, inverseJoinColumns = { @JoinColumn(name = "groupId", referencedColumnName = "id") })
-    private Set<Group> groups;
-    
-	private String password;
-	
-	private String username;
+    private boolean accountNonExpired;
 
-	private boolean accountNonExpired;
+    private boolean accountNonLocked;
 
-	private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
 
-	private boolean credentialsNonExpired;
+    /** Remainder for the password, can be null */
+    private String passRemainder;
 
-	private boolean enabled;
+    /** Date the account was created */
+    private Date registeredDate;
 
+    /** Date of the last login */
+    private Date lastLogin;
 
+    /** we don't delete users, we just mark them as deleted */
+    private Boolean deleted;
 
-	public User() {
-	}
-	
-	public User(String username) {
-		this.username = username;
-	}
+    private String activationKey;
 
-	public Long getId() {
-		return id;
-	}
+    public User() {
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    @Override
+    public boolean isEnabled() {
+        return accountNonExpired && accountNonLocked && credentialsNonExpired && !deleted;
+    }
 
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		Set<GrantedAuthority> authorities;
-		authorities = new HashSet<GrantedAuthority>();
-		for (Role role : getRoles()) {
-			authorities.add(new SimpleGrantedAuthority(role.getName()));
-		}
-		for (Group group : getGroups()) {
-			for (Role role : group.getRoles()) {
-				authorities.add(new SimpleGrantedAuthority(role.getName()));
-			}
-		}
-		return authorities;
-	}
+    @Override
+    public String getPassword() {
+        return password;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @Override
+    /** We use email for indent */
+    public String getUsername() {
+        return email;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    @Override
+    public boolean isAccountNonExpired() {
+        return accountNonExpired;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        this.accountNonExpired = accountNonExpired;
+    }
 
-	public boolean isAccountNonExpired() {
-		return accountNonExpired;
-	}
+    @Override
+    public boolean isAccountNonLocked() {
+        return accountNonLocked;
+    }
 
-	public void setAccountNonExpired(boolean accountNonExpired) {
-		this.accountNonExpired = accountNonExpired;
-	}
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        this.accountNonLocked = accountNonLocked;
+    }
 
-	public boolean isAccountNonLocked() {
-		return accountNonLocked;
-	}
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return credentialsNonExpired;
+    }
 
-	public void setAccountNonLocked(boolean accountNonLocked) {
-		this.accountNonLocked = accountNonLocked;
-	}
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        this.credentialsNonExpired = credentialsNonExpired;
+    }
 
-	public boolean isCredentialsNonExpired() {
-		return credentialsNonExpired;
-	}
+    public String getFirstname() {
+        return firstname;
+    }
 
-	public void setCredentialsNonExpired(boolean credentialsNonExpired) {
-		this.credentialsNonExpired = credentialsNonExpired;
-	}
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    public String getLastname() {
+        return lastname;
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
 
-	public Set<Role> getRoles() {
-		if(roles==null) {
-			this.roles = new HashSet<Role>();
-		}
-		return roles;
-	}
+    public String getPassRemainder() {
+        return passRemainder;
+    }
 
-	public void setRoles(Set<Role> roles) {
-		this.roles = roles;
-	}
+    public void setPassRemainder(String passRemainder) {
+        this.passRemainder = passRemainder;
+    }
 
-	public Set<Group> getGroups() {
-		if(groups==null) {
-			this.groups = new HashSet<Group>();
-		}
-		return groups;
-	}
+    public Date getRegisteredDate() {
+        return registeredDate;
+    }
 
-	public void setGroups(Set<Group> groups) {
-		this.groups = groups;
-	}
+    public void setRegisteredDate(Date registeredDate) {
+        this.registeredDate = registeredDate;
+    }
 
-	@Override
-	public String toString() {
-		return "User [id=" + id 
-				+ ", password=XXXXX" + ", username=" + username
-				+ ", accountNonExpired=" + accountNonExpired
-				+ ", accountNonLocked=" + accountNonLocked
-				+ ", credentialsNonExpired=" + credentialsNonExpired
-				+ ", enabled=" + enabled + "]";
-	}
+    public Date getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public Boolean getDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        this.deleted = deleted;
+    }
+
+    public String getActivationKey() {
+        return activationKey;
+    }
+
+    public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    @Transient
+    private Set<SimpleGrantedAuthority> authorities;
+
+    @Override
+    public Collection<SimpleGrantedAuthority> getAuthorities() {
+        if (authorities == null) {
+            initAuthorities();
+        }
+        return authorities;
+    }
+
+    private void initAuthorities() {
+        this.authorities = new HashSet<SimpleGrantedAuthority>();
+        Collection<Role> roles = getGrantedRoles();
+        for (Role role : roles) {
+            authorities.addAll(role.asAuthority());
+        }
+    }
+
+    public Collection<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(Collection<Group> groups) {
+        this.groups = groups;
+    }
+
+    @Override
+    public Collection<Role> getGrantedRoles() {
+        Collection<Role> roles = new HashSet<Role>();
+        roles.addAll(roles);
+        for (Group group : getGroups()) {
+            roles.addAll(group.getRoles());
+        }
+        return roles;
+    }
 
 }
