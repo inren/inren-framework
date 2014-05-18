@@ -1,0 +1,60 @@
+<!--
+
+    Copyright 2014 the original author or authors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+    implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<html xmlns:wicket>
+<wicket:panel>
+	<form wicket:id="form" class="form-horizontal">
+		<div class="control-group">
+			<label class="control-label" for="birthday" wicket:id="birthday.label">[birthday]</label>
+			<div class="controls">
+			   	<input wicket:id="birthday" name="birthday" class="text" />
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="height" wicket:id="height.label">[height]</label>
+			<div class="controls">
+			   	<input wicket:id="height" type="text" name="height" class="text" />
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="male" wicket:id="gender.label">[gender]</label>
+			<div class="controls">
+			   	<span wicket:id="male"></span>
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="targetWeightMin" wicket:id="targetWeightMin.label">[targetWeightMin]</label>
+			<div class="controls">
+			   	<input wicket:id="targetWeightMin" type="text" name="targetWeightMin" class="text" />
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="targetWeightMax" wicket:id="targetWeightMax.label">[targetWeightMax]</label>
+			<div class="controls">
+			   	<input wicket:id="targetWeightMax" type="text" name="targetWeightMax" class="text" />
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls">
+				<button class="btn" wicket:id="submit"><wicket:message key="submit.label">[submit]</wicket:message></button>
+				<button class="btn" wicket:id="cancel"><wicket:message key="cancel.label">[cancel]</wicket:message></button>
+			</div>
+		</div>
+	</form>
+</wicket:panel>
+</html>
