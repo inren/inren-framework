@@ -39,13 +39,11 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import de.inren.data.domain.group.Group;
 import de.inren.data.domain.security.Role;
 import de.inren.data.domain.user.User;
 import de.inren.frontend.common.manage.IWorktopManageDelegate;
 import de.inren.frontend.common.panel.ABasePanel;
 import de.inren.frontend.common.panel.IAdminPanel;
-import de.inren.service.group.GroupService;
 import de.inren.service.security.RoleService;
 import de.inren.service.user.UserService;
 
@@ -59,9 +57,6 @@ public class EditOrCreateUserPanel extends ABasePanel implements IAdminPanel {
 
     @SpringBean
     private RoleService roleService;
-
-    @SpringBean
-    private GroupService groupService;
 
     private final IWorktopManageDelegate<User> delegate;
 
@@ -135,17 +130,6 @@ public class EditOrCreateUserPanel extends ABasePanel implements IAdminPanel {
         form.add(new Label("roles.label", lRoles));
 
         form.add(new Palette<Role>("roles", new ListModel<Role>(allRoles), new ChoiceRenderer<Role>("name", "id"), 5, false));
-
-        List<Group> allGroups = new ArrayList<Group>();
-        try {
-            allGroups = groupService.loadAllGroups();
-        } catch (RuntimeException e1) {
-            e1.printStackTrace();
-        }
-        StringResourceModel lGroups = new StringResourceModel("groups.label", EditOrCreateUserPanel.this, null);
-        form.add(new Label("groups.label", lGroups));
-
-        form.add(new Palette<Group>("groups", new ListModel<Group>(allGroups), new ChoiceRenderer<Group>("name", "id"), 5, false));
 
         form.add(new AjaxLink<Void>("cancel") {
             @Override

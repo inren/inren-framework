@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package de.inren.service.authentication;
 
 import static org.junit.Assert.assertNotNull;
@@ -28,23 +27,24 @@ import de.inren.testsupport.InRenJUnit4SpringContextTests;
 
 /**
  * @author Ingo Renner
- * 
+ *
  */
-public class AuthenticationServiceImplTest extends InRenJUnit4SpringContextTests {
+public class AuthenticationServiceTest extends InRenJUnit4SpringContextTests {
 
-    @Autowired
-    AuthenticationService authenticationService;
-
-    @Before
+	@Autowired
+	AuthenticationService authenticationService;
+	
+	
+	@Before
     public void setUp() {
-        assertNotNull(authenticationService);
+		assertNotNull(authenticationService);
         ((AuthenticationServiceImpl) authenticationService).init();
     }
-
-    @Test
-    public void testAuthenticateUser() {
-        // Default user is admin@localhost with password geheim.
-        final User user = authenticationService.authenticateUser("admin@localhost", "geheim");
-        assertNotNull(user);
-    }
+	
+	@Test
+	public void testAuthenticateUser() {
+		// Default user is admin@localhost with password geheim.
+		final User user = authenticationService.authenticateUser("admin@localhost", "geheim");
+		assertNotNull(user);
+	}
 }
