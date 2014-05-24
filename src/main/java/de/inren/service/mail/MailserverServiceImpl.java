@@ -39,16 +39,16 @@ import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import com.google.common.collect.Lists;
 
-import de.inren.data.domain.mail.Mailserver;
+import de.inren.data.domain.mail.MailServer;
 import de.inren.data.domain.user.User;
-import de.inren.data.repositories.mail.MailserverRepository;
+import de.inren.data.repositories.mail.MailServerRepository;
 
 /**
  * @author Ingo Renner
  */
 @Service(value = "mailserverService")
 @Transactional(readOnly = true)
-public class MailserverServiceImpl implements MailserverService {
+public class MailserverServiceImpl implements MailServerService {
     private static final String DEFAULT_MAILSERVER_NAME = "default";
 
     private static final int DEFAULT_SMTP_PORT = 25;
@@ -56,7 +56,7 @@ public class MailserverServiceImpl implements MailserverService {
     private final Logger log = LoggerFactory.getLogger(MailserverServiceImpl.class);
 
     @Resource
-    private MailserverRepository mailserverDao;
+    private MailServerRepository mailserverDao;
 
     @Autowired
     private VelocityEngine velocityEngine;
@@ -67,12 +67,12 @@ public class MailserverServiceImpl implements MailserverService {
     @Override
     public void init() {
         if (mailserverDao.count() == 0) {
-            Mailserver mailserver = new Mailserver();
+            MailServer mailserver = new MailServer();
             mailserver.setName(DEFAULT_MAILSERVER_NAME);
             mailserver.setHost("localhost");
             mailserver.setPort(DEFAULT_SMTP_PORT);
             mailserver.setCurrent(true);
-            mailserver = saveMailserver(mailserver);
+            mailserver = save(mailserver);
             log.info("auto generated default mailserver created. " + mailserver.getHost() + ":" + mailserver.getPort());
         }
         log.info("mail service initialized");
@@ -80,28 +80,28 @@ public class MailserverServiceImpl implements MailserverService {
 
     @Override
     @Transactional
-    public final void deleteMailserver(Mailserver mailserver) {
+    public final void delete(MailServer mailserver) {
         mailserverDao.delete(mailserverDao.findOne(mailserver.getId()));
     }
 
     @Override
-    public final List<Mailserver> loadAllMailserver() {
+    public final List<MailServer> loadAll() {
         return Lists.newArrayList(mailserverDao.findAll());
     }
 
     @Override
-    public final Mailserver loadMailserver(Long id) {
+    public final MailServer load(Long id) {
         return mailserverDao.findOne(id);
     }
 
     @Override
     @Transactional
-    public final Mailserver saveMailserver(Mailserver mailserver) {
+    public final MailServer save(MailServer mailserver) {
         return mailserverDao.save(mailserver);
     }
 
     @Override
-    public Mailserver loadMailserverByName(String name) {
+    public MailServer loadMailServerByName(String name) {
         return mailserverDao.findByName(name);
     }
 
@@ -125,7 +125,7 @@ public class MailserverServiceImpl implements MailserverService {
 
         try {
             if (mailserver != null) {
-                getMailSender(loadMailserverByName(mailserver)).send(preparator);
+                getMailSender(loadMailServerByName(mailserver)).send(preparator);
             } else {
                 getMailSender(mailserverDao.findByCurrent(true)).send(preparator);
             }
@@ -134,7 +134,7 @@ public class MailserverServiceImpl implements MailserverService {
         }
     }
 
-    private JavaMailSenderImpl getMailSender(Mailserver mailserver) {
+    private JavaMailSenderImpl getMailSender(MailServer mailserver) {
         if (mailserver == null) {
             throw new RuntimeException("No mailserver found.");
         }

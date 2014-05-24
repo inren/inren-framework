@@ -26,6 +26,8 @@ import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Strings;
 
@@ -37,6 +39,8 @@ import de.inren.service.security.RoleService;
  * @author Ingo Renner
  * 
  */
+@Service(value = "dbPropertyService")
+@Transactional(readOnly = true)
 public class DbPropertyServiceImpl implements DbPropertyService {
 
     private final static Logger log = LoggerFactory.getLogger(DbPropertyServiceImpl.class);

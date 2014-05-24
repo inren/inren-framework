@@ -29,7 +29,7 @@ import de.inren.data.domain.core.DomainObject;
  */
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-public class Mailserver extends DomainObject {
+public class MailServer extends DomainObject {
 
     @Column(nullable = false, unique = true)
     private String name;

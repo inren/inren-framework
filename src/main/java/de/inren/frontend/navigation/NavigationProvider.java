@@ -32,6 +32,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.NavbarButton;
 import de.inren.frontend.admin.AdminPage;
 import de.inren.frontend.application.HomePage;
 import de.inren.frontend.auth.LoginPage;
+import de.inren.frontend.dbproperty.ManageDbPropertiesPage;
 import de.inren.frontend.group.ManageGroupsPage;
 import de.inren.frontend.health.BmiWikiPage;
 import de.inren.frontend.health.HealthSettingsPage;
@@ -40,6 +41,7 @@ import de.inren.frontend.health.PlotFatPage;
 import de.inren.frontend.health.PlotWaterPage;
 import de.inren.frontend.health.PlotWeightPage;
 import de.inren.frontend.health.backup.BackupRestorePage;
+import de.inren.frontend.mailserver.ManageMailserverPage;
 import de.inren.frontend.right.ManageRightsPage;
 import de.inren.frontend.role.ManageRolesPage;
 import de.inren.frontend.user.ManageUsersPage;
@@ -174,11 +176,21 @@ public class NavigationProvider {
                                 ComponentPosition.RIGHT), Arrays.asList(
                                 new GNode<NavigationElement>(new NavigationElement(ManageUsersPage.class, "Users.label",
                                         Arrays.asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
+
                                 new GNode<NavigationElement>(new NavigationElement(ManageGroupsPage.class, "Groups.label", Arrays.asList(Roles.ROLE_ADMIN
                                         .name()), ComponentPosition.LEFT)),
+
                                 new GNode<NavigationElement>(new NavigationElement(ManageRightsPage.class, "Rights.label", Arrays.asList(Roles.ROLE_ADMIN
-                                        .name()), ComponentPosition.LEFT)), new GNode<NavigationElement>(new NavigationElement(ManageRolesPage.class,
-                                        "Roles.label", Arrays.asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)))))
+                                        .name()), ComponentPosition.LEFT)),
+
+                                new GNode<NavigationElement>(new NavigationElement(ManageMailserverPage.class, "MailServer.label", Arrays
+                                        .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
+
+                                new GNode<NavigationElement>(new NavigationElement(ManageRolesPage.class, "Roles.label",
+                                        Arrays.asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
+
+                                new GNode<NavigationElement>(new NavigationElement(ManageDbPropertiesPage.class, "DbProperty.label", Arrays
+                                        .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)))))
                 .addChild(
                         new GNode<NavigationElement>(new NavigationElement(UserSettingsPage.class, "Settings.label", Arrays.asList(Roles.ROLE_USER.name(),
                                 Roles.ROLE_ADMIN.name()), ComponentPosition.RIGHT)));

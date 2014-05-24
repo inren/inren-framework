@@ -18,24 +18,24 @@ package de.inren.service.mail;
 
 import java.util.List;
 
-import de.inren.data.domain.mail.Mailserver;
+import de.inren.data.domain.mail.MailServer;
 import de.inren.data.domain.user.User;
 import de.inren.service.Initializable;
 
 /**
  * @author Ingo Renner
  */
-public interface MailserverService extends Initializable {
+public interface MailServerService extends Initializable {
 
-    Mailserver saveMailserver(Mailserver mailserver);
+    MailServer save(MailServer mailserver);
 
-    void deleteMailserver(Mailserver mailserver);
+    void delete(MailServer mailserver);
 
-    Mailserver loadMailserver(Long id);
+    MailServer load(Long id);
 
-    List<Mailserver> loadAllMailserver();
+    List<MailServer> loadAll();
 
-    Mailserver loadMailserverByName(String name);
+    MailServer loadMailServerByName(String name);
 
     void sendSignupMail(User user);
 

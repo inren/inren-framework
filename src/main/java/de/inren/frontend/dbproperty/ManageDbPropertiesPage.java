@@ -14,21 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.inren.data.repositories.mail;
 
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.stereotype.Repository;
+package de.inren.frontend.dbproperty;
 
-import de.inren.data.domain.mail.Mailserver;
+import org.apache.wicket.Component;
+import org.wicketstuff.annotation.mount.MountPath;
+
+import de.inren.data.domain.dbproperty.DbProperty;
+import de.inren.frontend.common.panel.WorktopPanel;
+import de.inren.frontend.common.templates.SecuredPage;
 
 /**
  * @author Ingo Renner
  * 
  */
-@Repository
-public interface MailserverRepository extends PagingAndSortingRepository<Mailserver, Long> {
+@MountPath(value = "/dbproperties")
+public class ManageDbPropertiesPage extends SecuredPage<DbProperty> {
 
-    Mailserver findByName(String name);
-
-    Mailserver findByCurrent(boolean current);
+    @Override
+    public Component createPanel(String wicketId) {
+        final WorktopPanel w = new WorktopPanel(wicketId);
+        w.setDelegate(new DbPropertyWorktopManageDelegate(w));
+        return w;
+    }
 }
