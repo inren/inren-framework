@@ -44,6 +44,6 @@ public class PlotWaterPage extends SecuredPage<IJqplotDefinition> {
     }
 
     final IModel<IJqplotDefinition> createJqplotModel() {
-        return new Model<IJqplotDefinition>(new HealthJqplotDefinition(measurementRepository, "water", getUid()));
+        return new Model<IJqplotDefinition>(new HealthJqplotDefinition(measurementRepository, "water", getSession().getUser().getId()));
     }
 }

@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.markup.head.filter.HeaderResponseContainer;
 import org.apache.wicket.markup.html.GenericWebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -57,12 +56,12 @@ import de.inren.security.BasicAuthenticationSession;
 
 /**
  * @author Ingo Renner
- *
+ * 
  */
 public class TemplatePage<T> extends GenericWebPage<T> {
-	
-	private final static Logger log = LoggerFactory.getLogger(TemplatePage.class);
-	
+
+    private final static Logger log = LoggerFactory.getLogger(TemplatePage.class);
+
     public TemplatePage() {
         super();
     }
@@ -70,17 +69,9 @@ public class TemplatePage<T> extends GenericWebPage<T> {
     public TemplatePage(IModel<T> model) {
         super(model);
     }
-    
+
     public TemplatePage(PageParameters parameters) {
         super(parameters);
-    }
-    
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        if (!hasBeenRendered()) {
-            commonInit();
-        }
     }
 
     @Override
@@ -88,86 +79,83 @@ public class TemplatePage<T> extends GenericWebPage<T> {
         super.onConfigure();
         configureTheme(getPageParameters());
     }
-    
-    private void commonInit() {
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
         add(new HtmlTag("html"));
 
         add(new MetaTag("viewport", Model.of("viewport"), Model.of("width=device-width, initial-scale=1.0")));
         add(new ChromeFrameMetaTag("chrome-frame"));
         add(new MetaTag("description", Model.of("description"), Model.of("InRen")));
-        add(new MetaTag("author", Model.of("author"), Model.of("Ingo Renner <renneringo@gmail.com>")));
+        add(new MetaTag("author", Model.of("author"), Model.of("Ingo Renner <ingo@inren.de>")));
 
         add(newNavbar("navbar"));
         add(new Footer("footer"));
 
         add(getLeftComponent("left"));
-        
+
         add(new FeedbackPanel("feedbackPanel").setOutputMarkupId(true));
 
         add(new BootstrapBaseBehavior());
         add(new Code("code-internal"));
-
     }
-    
+
     /**
      * creates a new {@link Navbar} instance
-     *
-     * @param markupId The components markup id.
+     * 
+     * @param markupId
+     *            The components markup id.
      * @return a new {@link Navbar} instance
      */
     protected Navbar newNavbar(String markupId) {
-    	Navbar navbar = new Navbar(markupId);
+        Navbar navbar = new Navbar(markupId);
 
-    	navbar.setPosition(Navbar.Position.STATIC_TOP);
+        navbar.setPosition(Navbar.Position.STATIC_TOP);
 
-    	// show brand name
-    	navbar.brandName(Model.of("InRen"));
+        // show brand name
+        navbar.brandName(Model.of("InRen"));
 
-    	navbar.addComponents(NavigationProvider.get().getTopNavbarComponents(getActivePermissions(), TemplatePage.this));
-    	
-    	// Theme selector on the right.
-    	final List<INavbarComponent> components = new ArrayList<INavbarComponent>();
-    	// components.add(new ImmutableNavbarComponent(new ThemesDropDown(), Navbar.ComponentPosition.RIGHT));
-    	if (isSignedIn()) {
-    	    components.add(new ImmutableNavbarComponent(
-    	            new NavbarButton<LogoutPage>(LogoutPage.class, 
-    	                new StringResourceModel("logout.label", TemplatePage.this, null)
-    	                    ).setIconType(GlyphIconType.globe), ComponentPosition.RIGHT)
-    	    );
-    	} else {
-            components.add(new ImmutableNavbarComponent(
-                    new NavbarButton<LoginPage>(LoginPage.class, 
-                            new StringResourceModel("login.label", TemplatePage.this, null)
-                            ).setIconType(GlyphIconType.globe), ComponentPosition.RIGHT)
-            );
-    	}
-    	// change language
-    	components.add(new ImmutableNavbarComponent(
-    	        new LanguageSwitcherPanel("component"), ComponentPosition.RIGHT));
-    	navbar.addComponents(components);
-    	return navbar;
+        navbar.addComponents(NavigationProvider.get().getTopNavbarComponents(getActivePermissions(), TemplatePage.this));
+
+        // Theme selector on the right.
+        final List<INavbarComponent> components = new ArrayList<INavbarComponent>();
+        // components.add(new ImmutableNavbarComponent(new ThemesDropDown(), Navbar.ComponentPosition.RIGHT));
+        if (isSignedIn()) {
+            components.add(new ImmutableNavbarComponent(new NavbarButton<LogoutPage>(LogoutPage.class, new StringResourceModel("logout.label",
+                    TemplatePage.this, null)).setIconType(GlyphIconType.globe), ComponentPosition.RIGHT));
+        } else {
+            components.add(new ImmutableNavbarComponent(new NavbarButton<LoginPage>(LoginPage.class, new StringResourceModel("login.label", TemplatePage.this,
+                    null)).setIconType(GlyphIconType.globe), ComponentPosition.RIGHT));
+        }
+        // change language
+        components.add(new ImmutableNavbarComponent(new LanguageSwitcherPanel("component"), ComponentPosition.RIGHT));
+        navbar.addComponents(components);
+        return navbar;
     }
-    
-    protected Long getUid() {
-        return ((BasicAuthenticationSession) getSession()).getUser().getId();
+
+    @Override
+    public BasicAuthenticationSession getSession() {
+        return (BasicAuthenticationSession) super.getSession();
     }
-    
+
     private boolean isSignedIn() {
-        return ((BasicAuthenticationSession) getSession()).isSignedIn();
+        return getSession().isSignedIn();
     }
-    
+
     private Collection<String> getActivePermissions() {
-        return ((BasicAuthenticationSession) getSession()).getRoles();
+        return getSession().getRoles();
     }
-    
+
     protected boolean hasNavigation() {
         return true;
     }
 
     /**
      * sets the theme for the current user.
-     *
-     * @param pageParameters current page parameters
+     * 
+     * @param pageParameters
+     *            current page parameters
      */
     private void configureTheme(PageParameters pageParameters) {
         StringValue theme = pageParameters.get("theme");
@@ -177,11 +165,11 @@ public class TemplatePage<T> extends GenericWebPage<T> {
             settings.getActiveThemeProvider().setActiveTheme(theme.toString(""));
         }
     }
-    
+
     protected Component getLeftComponent(String id) {
         log.debug("getLeftComponent for class: " + getClass());
         GNode<NavigationElement> menu = NavigationProvider.get().getSideNavbarComponents(getClass(), getActivePermissions(), TemplatePage.this);
-        if (menu==null) {
+        if (menu == null) {
             return new Label(id, "").setVisible(false);
         } else {
             return new NavList(id, menu);

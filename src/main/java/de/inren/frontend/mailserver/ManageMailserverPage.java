@@ -28,7 +28,7 @@ import de.inren.frontend.common.templates.SecuredPage;
  * @author Ingo Renner
  * 
  */
-@MountPath(value = "/rights")
+@MountPath(value = "/mailservers")
 public class ManageMailserverPage extends SecuredPage<Right> {
 
     @Override

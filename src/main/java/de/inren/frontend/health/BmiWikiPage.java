@@ -49,10 +49,10 @@ public class BmiWikiPage extends SecuredPage<IJqplotDefinition> {
     final IModel<IJqplotDefinition> createJqplotModel() {
         HealthSettings s = new HealthSettings();
         try {
-             s = healthSettingsService.loadByUser(getUid());
+             s = healthSettingsService.loadByUser(getSession().getUser().getId());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new Model<IJqplotDefinition>(new BmiJqplotDefinition(measurementRepository, s, "weight", getUid()));
+        return new Model<IJqplotDefinition>(new BmiJqplotDefinition(measurementRepository, s, "weight", getSession().getUser().getId()));
     }
 }

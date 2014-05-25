@@ -33,9 +33,7 @@ public class SecuredPage<T> extends TemplatePage<T> implements ISecured {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        if (!hasBeenRendered()) {
-            add(createPanel(WICKET_ID));
-        }
+        add(createPanel(WICKET_ID));
     }
 
     public Component createPanel(String wicketId) {

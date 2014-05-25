@@ -44,6 +44,6 @@ public class PlotFatPage extends SecuredPage<IJqplotDefinition> {
     }
 
     final IModel<IJqplotDefinition> createJqplotModel() {
-        return new Model<IJqplotDefinition>(new HealthJqplotDefinition(measurementRepository, "fat", getUid()));
+        return new Model<IJqplotDefinition>(new HealthJqplotDefinition(measurementRepository, "fat", getSession().getUser().getId()));
     }
 }

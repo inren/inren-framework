@@ -42,6 +42,6 @@ public class PlotWeightPage extends SecuredPage<IJqplotDefinition> {
     }
 
     final IModel<IJqplotDefinition> createJqplotModel() {
-        return new Model<IJqplotDefinition>(new HealthJqplotDefinition(measurementRepository, "weight", getUid()));
+        return new Model<IJqplotDefinition>(new HealthJqplotDefinition(measurementRepository, "weight", getSession().getUser().getId()));
     }
 }
