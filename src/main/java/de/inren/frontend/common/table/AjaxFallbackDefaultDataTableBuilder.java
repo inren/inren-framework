@@ -66,7 +66,7 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
 
     public AjaxFallbackDefaultDataTableBuilder(Component component) {
         this.component = component;
-        columns = new ArrayList<ICellPopulator<?>>();
+        columns = new ArrayList<>();
     }
 
     /**
@@ -80,13 +80,13 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         return this;
     }
 
-    @Deprecated // blöder Hack
-	public AjaxFallbackDefaultDataTableBuilder<?>  add(HealthColumn<Measurement> healthColumn) {
+    @Deprecated
+    // blöder Hack
+    public AjaxFallbackDefaultDataTableBuilder<?> add(HealthColumn<Measurement> healthColumn) {
         columns.add(healthColumn);
         return this;
-	}
+    }
 
-    
     /**
      * Fügt eine normale Spalte ein. Spaltenueberschrift wird ein
      * StringRescourceModel mit Key = property.label Inhalt ist ein
@@ -134,8 +134,7 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
      * @return this for chaining
      */
     public AjaxFallbackDefaultDataTableBuilder<T> addListProperty(String listProperty, String itemProperty) {
-        ICellPopulator<?> listColumn = new ListColumn<List<?>>(new StringResourceModel(listProperty + LABEL, component,
-                null), listProperty, itemProperty);
+        ICellPopulator<?> listColumn = new ListColumn<List<?>>(new StringResourceModel(listProperty + LABEL, component, null), listProperty, itemProperty);
         columns.add(listColumn);
         return this;
     }
@@ -172,15 +171,15 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         return this;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     public Component build(String id) {
-        return new AjaxFallbackDefaultDataTable<T, String>(id, (List<? extends IColumn<T, String>>) columns, (ISortableDataProvider<T, String>) dataProvider, numberOfRows).setOutputMarkupId(true);
+
+        return new AjaxFallbackDefaultDataTable<T, String>(id, (List<? extends IColumn<T, String>>) columns, (ISortableDataProvider<T, String>) dataProvider,
+                numberOfRows).setOutputMarkupId(true);
     }
 
     private ICellPopulator<?> createPropertyColumn(String property, boolean sortable) {
         if (sortable) {
-            return new PropertyColumn<Object, Object>(new StringResourceModel(property + LABEL, component, null), property,
-                    property);
+            return new PropertyColumn<Object, Object>(new StringResourceModel(property + LABEL, component, null), property, property);
         } else {
             return new PropertyColumn<Object, Object>(new StringResourceModel(property + LABEL, component, null), property);
         }
@@ -188,11 +187,9 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
 
     private ICellPopulator<?> createBooleanPropertyColumn(final String property, boolean sortable) {
         if (sortable) {
-            return new BooleanPropertyColumn<Object>(new StringResourceModel(property + LABEL, component, null),
-                    property, property, property);
+            return new BooleanPropertyColumn<Object>(new StringResourceModel(property + LABEL, component, null), property, property, property);
         } else {
-            return new BooleanPropertyColumn<Object>(new StringResourceModel(property + LABEL, component, null),
-                    property, property);
+            return new BooleanPropertyColumn<Object>(new StringResourceModel(property + LABEL, component, null), property, property);
         }
     }
 
@@ -204,8 +201,7 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
             this.property = property;
         }
 
-        private BooleanPropertyColumn(IModel<String> displayModel, String sortProperty, String propertyExpression,
-                String property) {
+        private BooleanPropertyColumn(IModel<String> displayModel, String sortProperty, String propertyExpression, String property) {
             super(displayModel, sortProperty, propertyExpression);
             this.property = property;
         }
@@ -215,15 +211,14 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
             PropertyModel<Boolean> model = new PropertyModel<Boolean>(rowModel, property);
             Boolean bool = model.getObject();
             // We tread null as false
-            if (bool==null) {
+            if (bool == null) {
                 bool = Boolean.FALSE;
             }
-//            item.add(bool ? new Label(componentId, "<span class=\"ui-icon ui-icon-check\"></span>")
-//                    .setEscapeModelStrings(false) : new Label(componentId, "<span>--</span>")
-//                    .setEscapeModelStrings(false));
-            item.add(bool ? new Label(componentId, "<span>+</span>")
-            .setEscapeModelStrings(false) : new Label(componentId, "<span>-</span>")
-            .setEscapeModelStrings(false));
+            // item.add(bool ? new Label(componentId, "<span class=\"ui-icon ui-icon-check\"></span>")
+            // .setEscapeModelStrings(false) : new Label(componentId, "<span>--</span>")
+            // .setEscapeModelStrings(false));
+            item.add(bool ? new Label(componentId, "<span>+</span>").setEscapeModelStrings(false) : new Label(componentId, "<span>-</span>")
+                    .setEscapeModelStrings(false));
         }
     }
 
