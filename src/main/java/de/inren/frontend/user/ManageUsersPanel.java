@@ -63,12 +63,12 @@ public class ManageUsersPanel extends ManagePanel implements IAdminPanel {
         AjaxFallbackDefaultDataTableBuilder<User> builder = new AjaxFallbackDefaultDataTableBuilder<User>(ManageUsersPanel.this);
 
         Component table = builder.addDataProvider(new RepositoryDataProvider<User>(userRepository))
-                .add(new AbstractColumn<Object, Object>(new StringResourceModel("actions.label", ManageUsersPanel.this, null)) {
+                .add(new AbstractColumn<User, String>(new StringResourceModel("actions.label", ManageUsersPanel.this, null)) {
 
                     @Override
-                    public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                    public void populateItem(Item<ICellPopulator<User>> cellItem, String componentId, IModel<User> rowModel) {
 
-                        final User user = (User) rowModel.getObject();
+                        final User user = rowModel.getObject();
 
                         ButtonGroup bg = new ButtonGroup(componentId) {
 

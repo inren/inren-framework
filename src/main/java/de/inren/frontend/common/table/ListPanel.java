@@ -28,7 +28,7 @@ import org.apache.wicket.model.PropertyModel;
  * @author Ingo Renner
  */
 public class ListPanel extends Panel {
-    public ListPanel(String id, PropertyModel<List<?>> listModel, final String itemExpression) {
+    public ListPanel(String id, PropertyModel<List<String>> listModel, final String itemExpression) {
         super(id, listModel);
         List<?> list = listModel.getObject();
         add(new ListPanelView("itemlist", list, itemExpression));

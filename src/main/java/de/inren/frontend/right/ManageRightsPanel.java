@@ -62,18 +62,17 @@ public class ManageRightsPanel extends ManagePanel implements IAdminPanel {
         this.delegate = delegate;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected final Component getTable(final String id) {
         AjaxFallbackDefaultDataTableBuilder<Right> builder = new AjaxFallbackDefaultDataTableBuilder<Right>(ManageRightsPanel.this);
 
         Component table = builder.addDataProvider(new RepositoryDataProvider<Right>(rightRepository))
-                .add(new AbstractColumn<Object, Object>(new StringResourceModel("actions.label", ManageRightsPanel.this, null)) {
+                .add(new AbstractColumn<Right, String>(new StringResourceModel("actions.label", ManageRightsPanel.this, null)) {
                     @Override
-                    public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                    public void populateItem(Item<ICellPopulator<Right>> cellItem, String componentId, IModel<Right> rowModel) {
 
                         final ActionPanelBuilder linkBuilder = ActionPanelBuilder.getBuilder();
-                        final Right right = (Right) rowModel.getObject();
+                        final Right right = rowModel.getObject();
                         // edit link
                         linkBuilder.add(new EditActionLink(true) {
                             @Override

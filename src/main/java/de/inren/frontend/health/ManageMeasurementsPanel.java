@@ -54,63 +54,63 @@ public class ManageMeasurementsPanel extends ManagePanel implements IAdminPanel 
 
     @SpringBean
     private MeasurementService measurementService;
-    
+
     @SpringBean
     private MeasurementRepository measurementRepository;
-    
-    private IWorktopManageDelegate<Measurement> delegate;
+
+    private final IWorktopManageDelegate<Measurement> delegate;
 
     public ManageMeasurementsPanel(String id, IWorktopManageDelegate<Measurement> delegate) {
         super(id);
         this.delegate = delegate;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected final Component getTable(final String id) {
-        AjaxFallbackDefaultDataTableBuilder<?> builder = new AjaxFallbackDefaultDataTableBuilder<Measurement>(ManageMeasurementsPanel.this);
-         
-        Component table =  builder.addDataProvider((RepositoryDataProvider<?>) new RepositoryDataProvider<Measurement>(measurementRepository){
+        AjaxFallbackDefaultDataTableBuilder<Measurement> builder = new AjaxFallbackDefaultDataTableBuilder<Measurement>(ManageMeasurementsPanel.this);
 
-            @Override
-            protected Page<Measurement> getPage(Pageable pageable) {
-                return measurementRepository.findByUid(getUser().getId(), pageable);
-            }
+        Component table = builder
+                .addDataProvider(new RepositoryDataProvider<Measurement>(measurementRepository) {
 
-            @Override
-            public long size() {
-                return measurementRepository.findByUid(getUser().getId()).size();
-            }
-            
-        })
-                .add(new AbstractColumn<Object, Object>(new StringResourceModel("actions.label", ManageMeasurementsPanel.this, null)) {
                     @Override
-                    public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                    protected Page<Measurement> getPage(Pageable pageable) {
+                        return measurementRepository.findByUid(getUser().getId(), pageable);
+                    }
 
-                        final Measurement measurement = (Measurement) rowModel.getObject();
+                    @Override
+                    public long size() {
+                        return measurementRepository.findByUid(getUser().getId()).size();
+                    }
 
-                        ButtonGroup bg = new ButtonGroup(componentId){
+                })
+                .add(new AbstractColumn<Measurement, String>(new StringResourceModel("actions.label", ManageMeasurementsPanel.this, null)) {
+                    @Override
+                    public void populateItem(Item<ICellPopulator<Measurement>> cellItem, String componentId, IModel<Measurement> rowModel) {
+
+                        final Measurement measurement = rowModel.getObject();
+
+                        ButtonGroup bg = new ButtonGroup(componentId) {
 
                             @Override
                             protected List<AbstractLink> newButtons(String buttonMarkupId) {
                                 List<AbstractLink> res = new ArrayList<AbstractLink>();
-                                BootstrapAjaxLink<String> edit = new BootstrapAjaxLink<String>("button", Buttons.Type.Menu){
-                                    
+                                BootstrapAjaxLink<String> edit = new BootstrapAjaxLink<String>("button", Buttons.Type.Menu) {
+
                                     @Override
                                     public void onClick(AjaxRequestTarget target) {
                                         delegate.switchToComponent(target, delegate.getEditPanel(new Model<Measurement>(measurement)));
-                                        
+
                                     }
                                 };
                                 edit.setIconType(GlyphIconType.pencil);
                                 edit.setSize(Buttons.Size.Mini);
                                 res.add(edit);
-                                
-                                BootstrapAjaxLink<String> delete = new BootstrapAjaxLink<String>("button", Buttons.Type.Menu){
-                                    
+
+                                BootstrapAjaxLink<String> delete = new BootstrapAjaxLink<String>("button", Buttons.Type.Menu) {
+
                                     @Override
                                     public void onClick(AjaxRequestTarget target) {
-                                        
+
                                         try {
                                             // feedback
                                             getSession().getFeedbackMessages().clear();
@@ -133,21 +133,20 @@ public class ManageMeasurementsPanel extends ManagePanel implements IAdminPanel 
                                 return res;
                             }
                         };
-                            
-                            
-                            // bg.add(new ToolbarBehavior());
-                            cellItem.add(bg);
+
+                        // bg.add(new ToolbarBehavior());
+                        cellItem.add(bg);
                     }
-                }).addPropertyColumn("id", true)
+                })
+                .addPropertyColumn("id", true)
                 .addPropertyColumn("uid", true)
-//                .addPropertyColumn("weight", true)
-//                .addPropertyColumn("fat", true)
-//                .addPropertyColumn("water", true)
+                // .addPropertyColumn("weight", true)
+                // .addPropertyColumn("fat", true)
+                // .addPropertyColumn("water", true)
                 .add(new HealthColumn<Measurement>(new Model<String>("weight"), "weight", "weight"))
                 .add(new HealthColumn<Measurement>(new Model<String>("fat"), "fat", "fat"))
-                .add(new HealthColumn<Measurement>(new Model<String>("water"), "water","water"))
-                .setNumberOfRows(10)
-                
+                .add(new HealthColumn<Measurement>(new Model<String>("water"), "water", "water")).setNumberOfRows(10)
+
                 .build(id);
         TableBehavior tableBehavior = new TableBehavior().bordered().condensed();
         table.add(tableBehavior);
@@ -157,23 +156,24 @@ public class ManageMeasurementsPanel extends ManagePanel implements IAdminPanel 
     @Override
     protected Component getActionPanel(String id) {
 
-        ButtonGroup bg = new ButtonGroup(id){
+        ButtonGroup bg = new ButtonGroup(id) {
 
             @Override
             protected List<AbstractLink> newButtons(String buttonMarkupId) {
                 List<AbstractLink> res = new ArrayList<AbstractLink>();
                 StringResourceModel srm = new StringResourceModel("actions.create.measurement", ManageMeasurementsPanel.this, null);
-                BootstrapAjaxLink<String> create = new BootstrapAjaxLink<String>("button", srm, Buttons.Type.Primary){
-                    
+                BootstrapAjaxLink<String> create = new BootstrapAjaxLink<String>("button", srm, Buttons.Type.Primary) {
+
                     @Override
                     public void onClick(AjaxRequestTarget target) {
                         delegate.switchToComponent(target, delegate.getEditPanel(null));
-                    }};
-                    create.setIconType(GlyphIconType.plussign);
-                    res.add(create);
+                    }
+                };
+                create.setIconType(GlyphIconType.plussign);
+                res.add(create);
                 return res;
             }
-            };
+        };
         return bg;
     }
 }

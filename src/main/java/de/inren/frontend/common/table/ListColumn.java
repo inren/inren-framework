@@ -29,7 +29,7 @@ import org.apache.wicket.model.PropertyModel;
  * 
  * @param <T>
  */
-public class ListColumn<T extends List<?>> extends AbstractColumn<T, Object> {
+public class ListColumn<T> extends AbstractColumn<T, String> {
     private final String propertyExpression;
     private final String itemExpression;
 
@@ -41,7 +41,7 @@ public class ListColumn<T extends List<?>> extends AbstractColumn<T, Object> {
 
     @Override
     public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> rowModel) {
-        item.add(new ListPanel(componentId, new PropertyModel(rowModel, propertyExpression), itemExpression));
+        item.add(new ListPanel(componentId, new PropertyModel<List<String>>(rowModel, propertyExpression), itemExpression));
     }
 
     /**

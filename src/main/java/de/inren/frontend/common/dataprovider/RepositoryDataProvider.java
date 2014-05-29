@@ -38,10 +38,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * @author Ingo Renner
  *
  */
-public class RepositoryDataProvider <T extends Serializable> extends SortableDataProvider<T, String> implements Serializable {
+public class RepositoryDataProvider<T extends Serializable> extends SortableDataProvider<T, String> implements Serializable {
 
-    private PagingAndSortingRepository<T, ? extends Serializable> repository;
-    
+    private final PagingAndSortingRepository<T, ? extends Serializable> repository;
+
     public RepositoryDataProvider(PagingAndSortingRepository<T, ? extends Serializable> repository) {
         super();
         this.repository = repository;
@@ -59,9 +59,9 @@ public class RepositoryDataProvider <T extends Serializable> extends SortableDat
         }
 
         if (getSort() == null || "".equals(getSort().getProperty().trim())) {
-            pageable = new PageRequest((int)page, (int)count);
+            pageable = new PageRequest((int) page, (int) count);
         } else {
-            pageable = new PageRequest((int)page, (int)count, getSort().isAscending() ? Direction.ASC : Direction.DESC, getSort().getProperty());
+            pageable = new PageRequest((int) page, (int) count, getSort().isAscending() ? Direction.ASC : Direction.DESC, getSort().getProperty());
         }
         List<T> res = new ArrayList<>();
         res.addAll(getPage(pageable).getContent());

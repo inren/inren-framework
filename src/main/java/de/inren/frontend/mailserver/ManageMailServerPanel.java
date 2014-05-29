@@ -67,12 +67,12 @@ public class ManageMailServerPanel extends ManagePanel implements IAdminPanel {
         AjaxFallbackDefaultDataTableBuilder<MailServer> builder = new AjaxFallbackDefaultDataTableBuilder<MailServer>(ManageMailServerPanel.this);
 
         Component table = builder.addDataProvider(new RepositoryDataProvider<MailServer>(mailServerRepository))
-                .add(new AbstractColumn<Object, Object>(new StringResourceModel("actions.label", ManageMailServerPanel.this, null)) {
+                .add(new AbstractColumn<MailServer, String>(new StringResourceModel("actions.label", ManageMailServerPanel.this, null)) {
                     @Override
-                    public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                    public void populateItem(Item<ICellPopulator<MailServer>> cellItem, String componentId, IModel<MailServer> rowModel) {
 
                         final ActionPanelBuilder linkBuilder = ActionPanelBuilder.getBuilder();
-                        final MailServer mailServer = (MailServer) rowModel.getObject();
+                        final MailServer mailServer = rowModel.getObject();
                         // edit link
                         linkBuilder.add(new EditActionLink(true) {
                             @Override

@@ -78,18 +78,17 @@ public class ManageGroupsPanel extends ManagePanel implements IAdminPanel {
         this.delegate = delegate;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected final Component getTable(final String id) {
         AjaxFallbackDefaultDataTableBuilder<Group> builder = new AjaxFallbackDefaultDataTableBuilder<Group>(ManageGroupsPanel.this);
 
         Component table = builder.addDataProvider(new RepositoryDataProvider<Group>(groupRepository))
-                .add(new AbstractColumn<Object, Object>(new StringResourceModel("actions.label", ManageGroupsPanel.this, null)) {
+                .add(new AbstractColumn<Group, String>(new StringResourceModel("actions.label", ManageGroupsPanel.this, null)) {
                     @Override
-                    public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                    public void populateItem(Item<ICellPopulator<Group>> cellItem, String componentId, IModel<Group> rowModel) {
 
                         final ActionPanelBuilder linkBuilder = ActionPanelBuilder.getBuilder();
-                        final Group group = (Group) rowModel.getObject();
+                        final Group group = rowModel.getObject();
                         // edit link
                         linkBuilder.add(new EditActionLink(true) {
                             @Override

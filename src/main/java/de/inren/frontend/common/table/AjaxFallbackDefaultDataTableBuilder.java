@@ -33,9 +33,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 
-import de.inren.data.domain.health.Measurement;
 import de.inren.frontend.common.dataprovider.RepositoryDataProvider;
-import de.inren.frontend.health.HealthColumn;
 
 /**
  * Sammlung von diversen Spaltentpen um auf einfache Weise eine Tabelle zu
@@ -57,16 +55,28 @@ import de.inren.frontend.health.HealthColumn;
  */
 public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> implements Serializable {
 
+    List<IColumn<T, String>> columns = new ArrayList<IColumn<T, String>>();
+
     private static final String LABEL = ".label";
 
-    private final List<ICellPopulator<?>> columns;
     private final Component component;
-    private ISortableDataProvider<?, String> dataProvider;
+    private ISortableDataProvider<T, String> dataProvider;
     private int numberOfRows = 10;
+
+    /**
+     * Wieviele Zeilen sollen dargestellt werden.
+     * 
+     * @param numberOfRows
+     * @return this for chaining
+     */
+    public AjaxFallbackDefaultDataTableBuilder<T> setNumberOfRows(int numberOfRows) {
+        this.numberOfRows = numberOfRows;
+        return this;
+    }
 
     public AjaxFallbackDefaultDataTableBuilder(Component component) {
         this.component = component;
-        columns = new ArrayList<>();
+        columns = new ArrayList<IColumn<T, String>>();
     }
 
     /**
@@ -75,16 +85,19 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
      * @param abstractColumn
      * @return this for chaining
      */
-    public AjaxFallbackDefaultDataTableBuilder<?> add(AbstractColumn<Object, Object> abstractColumn) {
-        columns.add(abstractColumn);
+    public AjaxFallbackDefaultDataTableBuilder<T> add(IColumn<T, String> column) {
+        columns.add(column);
         return this;
     }
 
-    @Deprecated
-    // blöder Hack
-    public AjaxFallbackDefaultDataTableBuilder<?> add(HealthColumn<Measurement> healthColumn) {
-        columns.add(healthColumn);
-        return this;
+    public AjaxFallbackDefaultDataTableBuilder(final String id, final List<? extends IColumn<T, String>> columns,
+            final ISortableDataProvider<T, String> dataProvider, final int rowsPerPage) {
+        this.component = null;
+    };
+
+    public Component build(String id) {
+
+        return new AjaxFallbackDefaultDataTable<T, String>(id, columns, dataProvider, numberOfRows).setOutputMarkupId(true);
     }
 
     /**
@@ -95,7 +108,7 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
      * @param property
      * @return this for chaining
      */
-    public AjaxFallbackDefaultDataTableBuilder<?> addPropertyColumn(String property) {
+    public AjaxFallbackDefaultDataTableBuilder<T> addPropertyColumn(String property) {
         return addPropertyColumn(property, false);
     }
 
@@ -114,27 +127,27 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         return this;
     }
 
+    private PropertyColumn<T, String> createPropertyColumn(String property, boolean sortable) {
+        if (sortable) {
+            return new PropertyColumn<T, String>(new StringResourceModel(property + LABEL, component, null), property, property);
+        } else {
+            return new PropertyColumn<T, String>(new StringResourceModel(property + LABEL, component, null), property);
+        }
+    }
+
     /**
      * Die Datenquelle für die tabelle.
      * 
      * @param repositoryDataProvider
      * @return this for chaining
      */
-    public AjaxFallbackDefaultDataTableBuilder<T> addDataProvider(RepositoryDataProvider<?> repositoryDataProvider) {
+    public AjaxFallbackDefaultDataTableBuilder<T> addDataProvider(RepositoryDataProvider<T> repositoryDataProvider) {
         this.dataProvider = repositoryDataProvider;
         return this;
     }
 
-    /**
-     * Diese Property muß eine Liste referenzieren, diese wird als ui List
-     * gerendert.
-     * 
-     * @param listProperty
-     * @param itemProperty
-     * @return this for chaining
-     */
     public AjaxFallbackDefaultDataTableBuilder<T> addListProperty(String listProperty, String itemProperty) {
-        ICellPopulator<?> listColumn = new ListColumn<List<?>>(new StringResourceModel(listProperty + LABEL, component, null), listProperty, itemProperty);
+        ListColumn<T> listColumn = new ListColumn<T>(new StringResourceModel(listProperty + LABEL, component, null), listProperty, itemProperty);
         columns.add(listColumn);
         return this;
     }
@@ -145,12 +158,12 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
      * @param property
      * @return this for chaining
      */
-    public AjaxFallbackDefaultDataTableBuilder<?> addBooleanPropertyColumn(String property) {
+    public AjaxFallbackDefaultDataTableBuilder<T> addBooleanPropertyColumn(String property) {
         return addBooleanPropertyColumn(property, false);
     }
 
     /**
-     * Zeigt einen * an, wenn der Propertywert true ist.
+     * Zeigt einen + an, wenn der Propertywert true ist für false ein -.
      * 
      * @param property
      * @return this for chaining
@@ -160,40 +173,15 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         return this;
     }
 
-    /**
-     * Wieviele Zeilen sollen dargestellt werden.
-     * 
-     * @param numberOfRows
-     * @return this for chaining
-     */
-    public AjaxFallbackDefaultDataTableBuilder<T> setNumberOfRows(int numberOfRows) {
-        this.numberOfRows = numberOfRows;
-        return this;
-    }
-
-    public Component build(String id) {
-
-        return new AjaxFallbackDefaultDataTable<T, String>(id, (List<? extends IColumn<T, String>>) columns, (ISortableDataProvider<T, String>) dataProvider,
-                numberOfRows).setOutputMarkupId(true);
-    }
-
-    private ICellPopulator<?> createPropertyColumn(String property, boolean sortable) {
+    private PropertyColumn<T, String> createBooleanPropertyColumn(final String property, boolean sortable) {
         if (sortable) {
-            return new PropertyColumn<Object, Object>(new StringResourceModel(property + LABEL, component, null), property, property);
+            return new BooleanPropertyColumn<T>(new StringResourceModel(property + LABEL, component, null), property, property, property);
         } else {
-            return new PropertyColumn<Object, Object>(new StringResourceModel(property + LABEL, component, null), property);
+            return new BooleanPropertyColumn<T>(new StringResourceModel(property + LABEL, component, null), property, property);
         }
     }
 
-    private ICellPopulator<?> createBooleanPropertyColumn(final String property, boolean sortable) {
-        if (sortable) {
-            return new BooleanPropertyColumn<Object>(new StringResourceModel(property + LABEL, component, null), property, property, property);
-        } else {
-            return new BooleanPropertyColumn<Object>(new StringResourceModel(property + LABEL, component, null), property, property);
-        }
-    }
-
-    private static final class BooleanPropertyColumn<T> extends PropertyColumn<T, Object> {
+    private static final class BooleanPropertyColumn<T> extends PropertyColumn<T, String> {
         private final String property;
 
         private BooleanPropertyColumn(IModel<String> displayModel, String propertyExpression, String property) {
@@ -220,6 +208,18 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
             item.add(bool ? new Label(componentId, "<span>+</span>").setEscapeModelStrings(false) : new Label(componentId, "<span>-</span>")
                     .setEscapeModelStrings(false));
         }
+
+    }
+
+    /**
+     * Fügt eine individuelle Spalte ein
+     * 
+     * @param abstractColumn
+     * @return this for chaining
+     */
+    public AjaxFallbackDefaultDataTableBuilder<T> add(AbstractColumn<T, String> abstractColumn) {
+        columns.add(abstractColumn);
+        return this;
     }
 
 }

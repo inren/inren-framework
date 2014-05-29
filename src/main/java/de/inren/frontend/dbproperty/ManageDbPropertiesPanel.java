@@ -62,18 +62,17 @@ public class ManageDbPropertiesPanel extends ManagePanel implements IAdminPanel 
         this.delegate = delegate;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected final Component getTable(final String id) {
         AjaxFallbackDefaultDataTableBuilder<DbProperty> builder = new AjaxFallbackDefaultDataTableBuilder<DbProperty>(ManageDbPropertiesPanel.this);
 
         Component table = builder.addDataProvider(new RepositoryDataProvider<DbProperty>(dbPropertyService))
-                .add(new AbstractColumn<Object, Object>(new StringResourceModel("actions.label", ManageDbPropertiesPanel.this, null)) {
+                .add(new AbstractColumn<DbProperty, String>(new StringResourceModel("actions.label", ManageDbPropertiesPanel.this, null)) {
                     @Override
-                    public void populateItem(Item<ICellPopulator<Object>> cellItem, String componentId, IModel<Object> rowModel) {
+                    public void populateItem(Item<ICellPopulator<DbProperty>> cellItem, String componentId, IModel<DbProperty> rowModel) {
 
                         final ActionPanelBuilder linkBuilder = ActionPanelBuilder.getBuilder();
-                        final DbProperty right = (DbProperty) rowModel.getObject();
+                        final DbProperty right = rowModel.getObject();
                         // edit link
                         linkBuilder.add(new EditActionLink(true) {
                             @Override
