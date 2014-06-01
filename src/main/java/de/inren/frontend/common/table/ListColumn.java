@@ -25,6 +25,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
+ * You have objects of type T which contain a field representing a
+ * list of strings. This Listcolumn renders your list of strings.
+ * 
+ * Part of the @see {@link AjaxFallbackDefaultDataTableBuilder}
+ * 
  * @author Ingo Renner
  * 
  * @param <T>
@@ -33,6 +38,15 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
     private final String propertyExpression;
     private final String itemExpression;
 
+    /**
+     * 
+     * @param displayModel
+     *            the model containing the list of <T> elements
+     * @param listProperty
+     *            the property name to retrieve the list
+     * @param itemProperty
+     *            the property name to retrieve the element to display as sting
+     */
     public ListColumn(IModel<String> displayModel, String listProperty, String itemProperty) {
         super(displayModel, null);
         this.propertyExpression = listProperty;
@@ -41,12 +55,9 @@ public class ListColumn<T> extends AbstractColumn<T, String> {
 
     @Override
     public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> rowModel) {
-        item.add(new ListPanel(componentId, new PropertyModel<List<String>>(rowModel, propertyExpression), itemExpression));
+        item.add(new ListPanel<T>(componentId, new PropertyModel<List<T>>(rowModel, propertyExpression), itemExpression));
     }
 
-    /**
-     * @return wicket property expression
-     */
     public String getPropertyExpression() {
         return propertyExpression;
     }

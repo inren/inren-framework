@@ -33,50 +33,86 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 
+import com.google.common.base.Strings;
+
 import de.inren.frontend.common.dataprovider.RepositoryDataProvider;
 
 /**
- * Sammlung von diversen Spaltentpen um auf einfache Weise eine Tabelle zu
- * erstellen. Die Tabellenspalten Überschriften werden als propertyname.label in
- * den Sprachdateien gesucht.
  * 
+ * This is an easy way to create a table, starting with a column of actions, followed
+ * by columns representing the fields of the object.
  * 
- * 
- * TODO Muss noch total überarbeitet werden. Im Moment Kraut und Rüben.
- * 
- * 
- * 
- * 
- * 
- * 
+ * This is a standard way to create tables for the admin interface. For special tables
+ * in your gui, please use default wicket elements as a start.
  * 
  * 
  * @author Ingo Renner
  */
 public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> implements Serializable {
 
-    List<IColumn<T, String>> columns = new ArrayList<IColumn<T, String>>();
+    /** List of the rows. */
+    private List<IColumn<T, String>> columns = new ArrayList<IColumn<T, String>>();
 
+    /** For a column with property name the description is found as name.label. */
     private static final String LABEL = ".label";
 
+    /** The component holding the table. Used for property resolving. */
     private final Component component;
+
+    /** Dataprovider for the table */
     private ISortableDataProvider<T, String> dataProvider;
+
+    /** Default number of rows to display in the table. */
     private int numberOfRows = 10;
 
     /**
-     * Wieviele Zeilen sollen dargestellt werden.
+     * How many rows do should the table have? Default is 10.
      * 
      * @param numberOfRows
+     *            must be greater 0, else use default.
      * @return this for chaining
      */
     public AjaxFallbackDefaultDataTableBuilder<T> setNumberOfRows(int numberOfRows) {
-        this.numberOfRows = numberOfRows;
+        if (numberOfRows > 0) {
+            this.numberOfRows = numberOfRows;
+        }
         return this;
     }
 
+    /**
+     * Constructor.
+     * 
+     * @param component
+     *            used for property resolving.
+     * 
+     */
     public AjaxFallbackDefaultDataTableBuilder(Component component) {
         this.component = component;
         columns = new ArrayList<IColumn<T, String>>();
+    }
+
+    /**
+     * Add an individual column
+     * 
+     * @param abstractColumn
+     *            the column
+     * @return this for chaining
+     */
+    public AjaxFallbackDefaultDataTableBuilder<T> add(IColumn<T, String> column) {
+        columns.add(column);
+        return this;
+    }
+
+    /**
+     * 
+     * @param id
+     * @return the table
+     */
+    public Component build(String id) {
+        if (Strings.isNullOrEmpty(id) || columns.isEmpty() || dataProvider == null) {
+            throw new IllegalStateException("Can't create Table, not all elements are available. id=" + id + ", " + toString());
+        }
+        return new AjaxFallbackDefaultDataTable<T, String>(id, columns, dataProvider, numberOfRows).setOutputMarkupId(true);
     }
 
     /**
@@ -85,25 +121,17 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
      * @param abstractColumn
      * @return this for chaining
      */
-    public AjaxFallbackDefaultDataTableBuilder<T> add(IColumn<T, String> column) {
-        columns.add(column);
+    public AjaxFallbackDefaultDataTableBuilder<T> add(AbstractColumn<T, String> abstractColumn) {
+        columns.add(abstractColumn);
         return this;
     }
 
-    public AjaxFallbackDefaultDataTableBuilder(final String id, final List<? extends IColumn<T, String>> columns,
-            final ISortableDataProvider<T, String> dataProvider, final int rowsPerPage) {
-        this.component = null;
-    };
-
-    public Component build(String id) {
-
-        return new AjaxFallbackDefaultDataTable<T, String>(id, columns, dataProvider, numberOfRows).setOutputMarkupId(true);
-    }
-
     /**
-     * Fügt eine normale Spalte ein. Spaltenueberschrift wird ein
-     * StringRescourceModel mit Key = property.label Inhalt ist ein
-     * PropertyModel mit dem property
+     * 
+     * Add a value to the row. This value will be displayed as is.
+     * The headline for this row will be resolved as "property.label" from the StringResources
+     * The value will be resolved with a PropertyModel of the default model with name property.
+     * There is no sort option.
      * 
      * @param property
      * @return this for chaining
@@ -113,14 +141,16 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
     }
 
     /**
-     * Fügt eine normale Spalte ein. Spaltenueberschrift wird ein
-     * StringRescourceModel mit Key = property.label Inhalt ist ein
-     * PropertyModel mit dem property, bei sortable true, kann nach dem Property
-     * sortiert werden.
-     * 
+     *
+     * Add a value to the row. This value will be displayed as is.
+     * The headline for this row will be resolved as "property.label" from the StringResources
+     * The value will be resolved with a PropertyModel of the default model with name property.
+     *
+     * If sortable is true, the resolfed field must be of a type that is comparable.
+     *
      * @param property
      * @param sortable
-     * @return this for chaining
+     * @return
      */
     public AjaxFallbackDefaultDataTableBuilder<T> addPropertyColumn(String property, boolean sortable) {
         columns.add(createPropertyColumn(property, sortable));
@@ -136,7 +166,7 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
     }
 
     /**
-     * Die Datenquelle für die tabelle.
+     * Datasource of the table.
      * 
      * @param repositoryDataProvider
      * @return this for chaining
@@ -146,6 +176,14 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         return this;
     }
 
+    /**
+     * If the value of the property is a short list of Strings you can use this
+     * method. If the list is more complex, you should consider using an individual column.
+     * 
+     * @param listProperty
+     * @param itemProperty
+     * @return this for chaining
+     */
     public AjaxFallbackDefaultDataTableBuilder<T> addListProperty(String listProperty, String itemProperty) {
         ListColumn<T> listColumn = new ListColumn<T>(new StringResourceModel(listProperty + LABEL, component, null), listProperty, itemProperty);
         columns.add(listColumn);
@@ -153,7 +191,7 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
     }
 
     /**
-     * Zeigt einen * an, wenn der Propertywert true ist.
+     * A default implementation to display boolean values.
      * 
      * @param property
      * @return this for chaining
@@ -163,9 +201,12 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
     }
 
     /**
-     * Zeigt einen + an, wenn der Propertywert true ist für false ein -.
+     * A default implementation to display boolean values.
+     * With the option of sorting.
      * 
      * @param property
+     * @param sortable
+     * 
      * @return this for chaining
      */
     public AjaxFallbackDefaultDataTableBuilder<T> addBooleanPropertyColumn(String property, boolean sortable) {
@@ -198,28 +239,28 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> rowModel) {
             PropertyModel<Boolean> model = new PropertyModel<Boolean>(rowModel, property);
             Boolean bool = model.getObject();
-            // We tread null as false
             if (bool == null) {
                 bool = Boolean.FALSE;
             }
-            // item.add(bool ? new Label(componentId, "<span class=\"ui-icon ui-icon-check\"></span>")
-            // .setEscapeModelStrings(false) : new Label(componentId, "<span>--</span>")
-            // .setEscapeModelStrings(false));
             item.add(bool ? new Label(componentId, "<span>+</span>").setEscapeModelStrings(false) : new Label(componentId, "<span>-</span>")
                     .setEscapeModelStrings(false));
         }
 
     }
 
-    /**
-     * Fügt eine individuelle Spalte ein
-     * 
-     * @param abstractColumn
-     * @return this for chaining
-     */
-    public AjaxFallbackDefaultDataTableBuilder<T> add(AbstractColumn<T, String> abstractColumn) {
-        columns.add(abstractColumn);
-        return this;
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("AjaxFallbackDefaultDataTableBuilder [columns=");
+        builder.append(columns);
+        builder.append(", component=");
+        builder.append(component);
+        builder.append(", dataProvider=");
+        builder.append(dataProvider);
+        builder.append(", numberOfRows=");
+        builder.append(numberOfRows);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

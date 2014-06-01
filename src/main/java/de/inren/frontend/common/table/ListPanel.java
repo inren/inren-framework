@@ -25,26 +25,30 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.PropertyModel;
 
 /**
+ * Simple panel to display a short list of strings in an ul li list.
+ * If your list is longer as maybe 10 elements or your elements are more complex than one short String,
+ * please consider to make your own ListPanel implementation.
+ * 
  * @author Ingo Renner
  */
-public class ListPanel extends Panel {
-    public ListPanel(String id, PropertyModel<List<String>> listModel, final String itemExpression) {
+public class ListPanel<T> extends Panel {
+
+    public ListPanel(String id, PropertyModel<List<T>> listModel, final String itemExpression) {
         super(id, listModel);
-        List<?> list = listModel.getObject();
-        add(new ListPanelView("itemlist", list, itemExpression));
+        add(new ListPanelView("itemlist", listModel.getObject(), itemExpression));
     }
 
-    private static final class ListPanelView extends ListView<Object> {
+    private final class ListPanelView extends ListView<T> {
         private final String itemExpression;
 
-        private ListPanelView(String id, List<? extends Object> list, String itemExpression) {
+        private ListPanelView(String id, List<T> list, String itemExpression) {
             super(id, list);
             this.itemExpression = itemExpression;
         }
 
         @Override
-        protected void populateItem(ListItem<Object> item) {
-            item.add(new Label("item", new PropertyModel<Object>(item.getModelObject(), itemExpression)));
+        protected void populateItem(ListItem<T> item) {
+            item.add(new Label("item", new PropertyModel<String>(item.getModelObject(), itemExpression)));
         }
     }
 }
