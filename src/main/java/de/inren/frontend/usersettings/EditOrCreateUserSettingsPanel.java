@@ -51,7 +51,7 @@ public class EditOrCreateUserSettingsPanel extends ABasePanel implements IAdminP
 
     @SpringBean
     private UserSettingsService userSettingsService;
-    
+
     private UserSettings userSettings;
 
     private final User user;
@@ -67,10 +67,10 @@ public class EditOrCreateUserSettingsPanel extends ABasePanel implements IAdminP
             userSettings = userSettingsService.loadByUser(user.getId());
         } catch (RuntimeException e) {
             // TODO Feedbackpannel Meldung
+            userSettings = new UserSettings();
         }
     }
 
-    
     private List<String> getThemes() {
         List<ITheme> themes = Bootstrap.getSettings(getApplication()).getThemeProvider().available();
         List<String> res = new ArrayList<String>();
@@ -79,15 +79,15 @@ public class EditOrCreateUserSettingsPanel extends ABasePanel implements IAdminP
         }
         return res;
     }
-    
+
     @Override
     protected void initGui() {
 
         final Form<UserSettings> form = new Form<UserSettings>("form", new CompoundPropertyModel<UserSettings>(userSettings));
-        
+
         StringResourceModel lName = new StringResourceModel("name.label", EditOrCreateUserSettingsPanel.this, null);
         form.add(new Label("name.label", lName));
-        
+
         form.add(new DropDownChoice<String>("name", new PropertyModel<String>(userSettings, "theme"), getThemes()));
 
         form.add(new AjaxLink<Void>("cancel") {
@@ -100,15 +100,14 @@ public class EditOrCreateUserSettingsPanel extends ABasePanel implements IAdminP
         });
 
         form.add(new Button("submit") {
-            
-            
+
             @Override
             public void onSubmit() {
                 try {
-                    UserSettings u = userSettingsService.save((UserSettings) form.getModelObject());
-                    
+                    UserSettings u = userSettingsService.save(form.getModelObject());
+
                     ApplicationSettingsUtil.applySettings(u);
-                    
+
                     getFeedback().info(new StringResourceModel("feedback.success", EditOrCreateUserSettingsPanel.this, null).getString());
                 } catch (RuntimeException e) {
                     getFeedback().error(new StringResourceModel("TODO", EditOrCreateUserSettingsPanel.this, null).getString());

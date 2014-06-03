@@ -21,12 +21,16 @@ import javax.annotation.Resource;
 import org.apache.wicket.Application;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.agilecoders.wicket.core.Bootstrap;
+import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchTheme;
+import de.inren.data.domain.user.User;
 import de.inren.data.domain.usersettings.UserSettings;
 import de.inren.data.repositories.usersettings.UserSettingsRepository;
+import de.inren.service.user.UserService;
 
 /**
  * @author Ingo Renner
@@ -36,15 +40,28 @@ import de.inren.data.repositories.usersettings.UserSettingsRepository;
 @Transactional(readOnly = true)
 public class UserSettingsServiceImpl implements UserSettingsService {
 
-	private static final Logger log = LoggerFactory.getLogger(UserSettingsServiceImpl.class);
-	
+    private static final Logger log = LoggerFactory.getLogger(UserSettingsServiceImpl.class);
+
     @Resource
     UserSettingsRepository userSettingsRepository;
 
+    @Autowired
+    UserService userService;
+
     @Override
     public void init() {
-        // ??? nothing to do
-        log.info("user settings service initialized");
+        log.info("UserSettingsService init start.");
+        userService.init();
+        for (User user : userService.loadAllUser()) {
+            UserSettings userSettings = userSettingsRepository.findByUid(user.getId());
+            if (userSettings == null) {
+                userSettings = new UserSettings();
+                userSettings.setUid(user.getId());
+                userSettings.setTheme(BootswatchTheme.Lumen.name());
+                userSettingsRepository.save(userSettings);
+            }
+        }
+        log.info("UserSettingsService init done.");
     }
 
     @Override
@@ -55,8 +72,8 @@ public class UserSettingsServiceImpl implements UserSettingsService {
     @Override
     public UserSettings loadByUser(Long uid) {
         UserSettings us = userSettingsRepository.findByUid(uid);
-        if (us==null) {
-           us = createDefaultUserSettings(uid);
+        if (us == null) {
+            us = createDefaultUserSettings(uid);
         }
         return us;
     }

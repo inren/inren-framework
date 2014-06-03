@@ -78,8 +78,8 @@
 		<spring.context.version>4.0.2.RELEASE</spring.context.version>
 		
 		<wicket.version>6.15.0</wicket.version>
-		<wicket-webjars.version>0.4.1</wicket-webjars.version>
-		<wicket-bootstrap.version>0.9.2</wicket-bootstrap.version>
+		<wicket-webjars.version>0.4.2</wicket-webjars.version>
+		<wicket-bootstrap.version>0.9.3</wicket-bootstrap.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
          <lowagie.itext.version>2.1.7</lowagie.itext.version>
 		
