@@ -88,8 +88,8 @@
 	</properties>
 	
 	<scm>
-		<connection>scm:git:git://github.com/inren/inren-framework.git</connection>
-		<developerConnection>scm:git:git://git@github.com/inren/inren-framework.git</developerConnection>
+	
+		<connection>scm:git:https://github.com/inren/inren-framework.git</connection>
 		<url>https://github.com/inren/inren-framework</url>
 		<tag>HEAD</tag>
 	</scm>	
