@@ -19,6 +19,8 @@ package de.inren.service.user;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,67 +35,69 @@ import de.inren.testsupport.InRenJUnit4SpringContextTests;
  */
 public class UserServiceTest extends InRenJUnit4SpringContextTests {
 
-	@Autowired
-	UserService userService;
-	
-	
-	@Before
+    private static final Logger log = Logger.getLogger(UserServiceTest.class);
+    @Autowired
+    UserService userService;
+
+    @Before
     public void setUp() {
-		assertNotNull(userService);
+        log.setLevel(Level.DEBUG);
+        assertNotNull(userService);
         ((UserServiceImpl) userService).init();
     }
-	
-	@Test
-	public void testLoadUserByUsername() {
-		// Username is the email 
-		UserDetails user = userService.loadUserByUsername("admin@localhost");
-		assertNotNull(user);
-		// Unknown user
-		try {
-			userService.loadUserByUsername("unknown@localhost");
-		} catch (Exception e) {
-			// expected
-		}
-	}
 
-	@Test
-	public void testLoadByIdent() {
-		// ident is the email 
-		User user = userService.loadByIdent("admin@localhost");
-		assertNotNull(user);
-		
-		// Unknown user
-		try {
-			userService.loadByIdent("unknown@localhost");
-		} catch (Exception e) {
-			// expected
-		}
-	}
-	
-	@Test
-	public void testSave() {
-		User user = userService.loadByIdent("admin@localhost");
-		final String pwdOld = user.getPassword();
-		user.setPassword("tollesPwd");
-		User userSaved = userService.save(user);
-		assertTrue(!"tollesPwd".equals(userSaved.getPassword()));
-		assertTrue(!pwdOld.equals(userSaved.getPassword()));
-		User userNewPwd = userService.authenticateUser("admin@localhost", "tollesPwd");
-		assertNotNull(userNewPwd);
-		// cleanup 
-		userNewPwd.setPassword("geheim");
-		userService.save(userNewPwd);
-		User userRestored = userService.authenticateUser("admin@localhost", "geheim");
-		assertNotNull(userRestored);
+    @Test
+    public void testLoadUserByUsername() {
+        // Username is the email
+        UserDetails user = userService.loadUserByUsername("admin@localhost");
+        assertNotNull(user);
+        // Unknown user
+        try {
+            userService.loadUserByUsername("unknown@localhost");
+        } catch (Exception e) {
+            // expected
+        }
+    }
 
-	}
-	
-	@Test
-	public void testAuthenticateUser() {
-		// Default user is admin@localhost with password geheim.
-		final User user = userService.authenticateUser("admin@localhost", "geheim");
-		assertNotNull(user);
+    @Test
+    public void testLoadByIdent() {
+        // ident is the email
+        User user = userService.loadByIdent("admin@localhost");
+        assertNotNull(user);
 
-	}
+        // Unknown user
+        try {
+            userService.loadByIdent("unknown@localhost");
+        } catch (Exception e) {
+            // expected
+        }
+    }
+
+    @Test
+    public void testSave() {
+        User user = userService.loadByIdent("admin@localhost");
+        final String pwdOld = user.getPassword();
+        user.setPassword("tollesPwd");
+        User userSaved = userService.save(user);
+        assertTrue(!"tollesPwd".equals(userSaved.getPassword()));
+        assertTrue(!pwdOld.equals(userSaved.getPassword()));
+        User userNewPwd = userService.authenticateUser("admin@localhost", "tollesPwd");
+        assertNotNull(userNewPwd);
+        // cleanup
+        userNewPwd.setPassword("geheim");
+        userService.save(userNewPwd);
+        User userRestored = userService.authenticateUser("admin@localhost", "geheim");
+        assertNotNull(userRestored);
+
+    }
+
+    @Test
+    public void testAuthenticateUser() {
+        // Default user is admin@localhost with password geheim.
+        final User user = userService.authenticateUser("admin@localhost", "geheim");
+        assertNotNull(user);
+        log.debug("Loaded: " + user);
+        assertTrue(!user.getAuthorities().isEmpty());
+    }
 
 }

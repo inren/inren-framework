@@ -228,12 +228,48 @@ public class User extends AuthorizedDomainObject implements UserDetails {
 
     @Override
     public Collection<Role> getGrantedRoles() {
-        Collection<Role> roles = new HashSet<Role>();
-        roles.addAll(roles);
+        Collection<Role> grantedRoles = new HashSet<Role>();
+
+        grantedRoles.addAll(getRoles());
         for (Group group : getGroups()) {
-            roles.addAll(group.getRoles());
+            grantedRoles.addAll(group.getRoles());
         }
-        return roles;
+        return grantedRoles;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("User [email=");
+        builder.append(email);
+        builder.append(", password=");
+        builder.append(password);
+        builder.append(", firstname=");
+        builder.append(firstname);
+        builder.append(", lastname=");
+        builder.append(lastname);
+        builder.append(", groups=");
+        builder.append(groups);
+        builder.append(", accountNonExpired=");
+        builder.append(accountNonExpired);
+        builder.append(", accountNonLocked=");
+        builder.append(accountNonLocked);
+        builder.append(", credentialsNonExpired=");
+        builder.append(credentialsNonExpired);
+        builder.append(", passRemainder=");
+        builder.append(passRemainder);
+        builder.append(", registeredDate=");
+        builder.append(registeredDate);
+        builder.append(", lastLogin=");
+        builder.append(lastLogin);
+        builder.append(", deleted=");
+        builder.append(deleted);
+        builder.append(", activationKey=");
+        builder.append(activationKey);
+        builder.append(", authorities=");
+        builder.append(authorities);
+        builder.append("]");
+        return builder.toString();
     }
 
 }

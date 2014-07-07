@@ -109,6 +109,7 @@ public class InRenApplication extends AuthenticatedWebApplication {
 
         // This application can be reached from internet, but you must know the right port.
         // So I like to know who else besides me tries to connect.
+
         getRequestCycleListeners().add(new AbstractRequestCycleListener() {
             @Override
             public void onBeginRequest(RequestCycle cycle) {

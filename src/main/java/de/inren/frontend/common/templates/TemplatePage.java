@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
+import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.markup.html.GenericWebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -90,7 +92,14 @@ public class TemplatePage<T> extends GenericWebPage<T> {
         add(new MetaTag("description", Model.of("description"), Model.of("InRen")));
         add(new MetaTag("author", Model.of("author"), Model.of("Ingo Renner <ingo@inren.de>")));
 
-        add(newNavbar("navbar"));
+        DebugBar debugBar = new DebugBar("debug");
+        debugBar.add(AttributeModifier.append("style", "z-index:2000;"));
+        add(debugBar);
+
+        Navbar navbar = createNavbar("navbar");
+        navbar.add(AttributeModifier.append("style", "padding-top: 20px;"));
+        add(navbar);
+
         add(new Footer("footer"));
 
         add(getLeftComponent("left"));
@@ -108,13 +117,13 @@ public class TemplatePage<T> extends GenericWebPage<T> {
      *            The components markup id.
      * @return a new {@link Navbar} instance
      */
-    protected Navbar newNavbar(String markupId) {
+    protected Navbar createNavbar(String markupId) {
         Navbar navbar = new Navbar(markupId);
 
         navbar.setPosition(Navbar.Position.STATIC_TOP);
 
         // show brand name
-        navbar.brandName(Model.of("InRen"));
+        navbar.setBrandName(Model.of("InRen"));
 
         navbar.addComponents(NavigationProvider.get().getTopNavbarComponents(getActivePermissions(), TemplatePage.this));
 

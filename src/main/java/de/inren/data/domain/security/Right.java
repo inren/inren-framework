@@ -42,7 +42,7 @@ import de.inren.data.domain.core.DomainObject;
 // Right is not allowed with mysql.
 public class Right extends DomainObject {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Column(nullable = true)

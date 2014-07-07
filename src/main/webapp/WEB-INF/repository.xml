@@ -36,14 +36,15 @@
 		class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"
 		p:databasePlatform="${jpa.databasePlatform}" 
 		p:showSql="${jpa.showSql}"
-		p:generateDdl="${jpa.generateDdl}" />
-
-
+		p:generateDdl="${jpa.generateDdl}" 
+	/>
+	
 	<util:map id="jpapm">
 		<entry key="hibernate.cache.region.factory_class" value="org.hibernate.cache.ehcache.EhCacheRegionFactory" />
 		<entry key="hibernate.cache.use_second_level_cache" value="true" />
 		<entry key="hibernate.cache.use_query_cache" value="true" />
 		<entry key="hibernate.cache.use_minimal_puts" value="true" />
+		<entry key="hibernate.hbm2ddl.auto" value="${hibernate.hbm2ddl.auto}"/>
 	</util:map>
 
 	<bean id="entityManagerFactory"
@@ -58,23 +59,7 @@
 		<property name="PersistenceProvider">
 			<bean id="persistenceProvider" class="org.hibernate.jpa.HibernatePersistenceProvider" />	
 		</property>
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
-		</property>		
-		<property name="jpaProperties">
-			<props>
-				<!--
-					Options for hibernate.hbm2ddl.auto are:
-				    * validate: validate the schema, makes no changes to the database.
-				    * update: update the schema.
-				    * create: creates the schema, destroying previous data.
-				    * create-drop: drop the schema at the end of the session.
-				 -->
-				<prop key="hibernate.hbm2ddl.auto">create</prop>
-				<prop key="hibernate.dialect">${jpa.databasePlatform}</prop>
-				<prop key="showSql">true"</prop>
-			</props>
-		</property>
+		<property name="jpaVendorAdapter" ref="jpaVendorAdapter" />
 	</bean>
 	<!-- Where to find the repositories. -->
 	<jpa:repositories base-package="de.inren.data.repositories" />

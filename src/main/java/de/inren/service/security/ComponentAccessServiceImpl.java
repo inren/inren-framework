@@ -1,0 +1,87 @@
+/**
+ * Copyright 2014 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+ * implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package de.inren.service.security;
+
+import java.util.Arrays;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.SimpleBeanDefinitionRegistry;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.core.type.filter.AssignableTypeFilter;
+import org.springframework.core.type.filter.TypeFilter;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import de.inren.frontend.common.templates.SecuredPage;
+
+/**
+ * @author Ingo Renner
+ *
+ */
+@Service(value = "componentAccessService")
+@Transactional(readOnly = true)
+public class ComponentAccessServiceImpl implements ComponentAccessService {
+    private final static Logger log = LoggerFactory.getLogger(ComponentAccessServiceImpl.class);
+
+    private boolean initDone = false;
+
+    private BeanDefinitionRegistry beanDefinitionRegistry;
+
+    private void initBeanDefinitionRegistry() {
+        beanDefinitionRegistry = new SimpleBeanDefinitionRegistry();
+        ClassPathBeanDefinitionScanner beanDefinitionScanner = new ClassPathBeanDefinitionScanner(beanDefinitionRegistry);
+
+        TypeFilter typeFilter = new AssignableTypeFilter(SecuredPage.class);
+        beanDefinitionScanner.addIncludeFilter(typeFilter);
+        beanDefinitionScanner.setIncludeAnnotationConfig(false);
+        beanDefinitionScanner.scan("de.inren.frontend");
+    }
+
+    @Override
+    public void init() {
+        log.info("ComponentAccessService init start.");
+        initBeanDefinitionRegistry();
+
+        List<String> components = Arrays.asList(findPages());
+
+        log.info("Pages = " + (components == null ? "no pages found." : components));
+
+        if (components != null) {
+            for (String page : components) {
+                try {
+                    BeanDefinition bd = beanDefinitionRegistry.getBeanDefinition(page);
+                    log.info("found page: " + page + " Definition: " + bd.toString());
+                } catch (Exception e) {
+                    log.error("failed to initialize service", e);
+                }
+            }
+        }
+        initDone = true;
+        log.info("ComponentAccessService init done.");
+
+    }
+
+    private String[] findPages() {
+        String[] beans = beanDefinitionRegistry.getBeanDefinitionNames();
+        return beans;
+    }
+}

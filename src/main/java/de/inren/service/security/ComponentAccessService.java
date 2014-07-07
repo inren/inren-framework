@@ -14,28 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package de.inren.frontend.common.templates;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.markup.html.basic.Label;
+package de.inren.service.security;
+
+import de.inren.service.Initializable;
 
 /**
- * 
  * @author Ingo Renner
- * 
- * @param <T>
+ *
  */
-public class SecuredPage<T> extends TemplatePage<T> implements ISecured {
+public interface ComponentAccessService extends Initializable {
 
-    private final static String WICKET_ID = "panel";
-
-    @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        add(createPanel(WICKET_ID));
-    }
-
-    public Component createPanel(String wicketId) {
-        return new Label(wicketId, "Please override 'createPanel(String wicketId)' in " + getClass().getSimpleName());
-    }
 }

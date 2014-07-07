@@ -64,9 +64,7 @@ public abstract class ABasePanel extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        if (!hasBeenRendered()) {
-            initGui();
-        }
+        initGui();
     }
 
     protected abstract void initGui();

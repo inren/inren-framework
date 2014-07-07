@@ -22,16 +22,15 @@ import org.apache.wicket.model.StringResourceModel;
 
 import de.inren.frontend.common.templates.SecuredPage;
 
-
 /**
  * @author Ingo Renner
  *
  */
 public class AdminPage extends SecuredPage {
 
+    @Override
     public Component createPanel(String wicketId) {
-        return new Label(wicketId, 
-                new StringResourceModel("AdminPage.info", AdminPage.this, null));
+        return new Label(wicketId, new StringResourceModel("AdminPage.info", AdminPage.this, null));
     }
 
 }

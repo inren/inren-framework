@@ -137,17 +137,24 @@ public class NavigationProvider {
     }
 
     private boolean hasRight(List<String> needRoles, Collection<String> givenRoles) {
-
-        return true;
-        // if (needRoles.isEmpty()) {
-        // return true;
-        // }
-        // for (String r : needRoles) {
-        // if (givenRoles.contains(r)) {
-        // return true;
-        // }
-        // }
-        // return false;
+        if (needRoles.isEmpty()) {
+            return true;
+        }
+        for (String r : needRoles) {
+            if (r.contains(":")) {
+                if (givenRoles.contains(r)) {
+                    return true;
+                }
+            } else {
+                for (String roleRight : givenRoles) {
+                    String role = roleRight.split(":")[0];
+                    if (r.equals(role)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private void initNavigation() {
@@ -170,7 +177,7 @@ public class NavigationProvider {
                                         new GNode<NavigationElement>(new NavigationElement(BackupRestorePage.class, "Backup/Restore.label", healthRoles,
                                                 ComponentPosition.LEFT)),
                                         new GNode<NavigationElement>(new NavigationElement(HealthSettingsPage.class, "Settings.label", Arrays
-                                                .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)))))
+                                                .asList(Roles.ROLE_USER.name()), ComponentPosition.LEFT)))))
                 .addChild(
                         new GNode<NavigationElement>(new NavigationElement(AdminPage.class, "Admin.label", Arrays.asList(Roles.ROLE_ADMIN.name()),
                                 ComponentPosition.RIGHT), Arrays.asList(

@@ -38,6 +38,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.agilecoders.wicket.core.markup.html.bootstrap.image.GlyphIconType;
 import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior;
 import de.inren.data.domain.health.Measurement;
+import de.inren.data.domain.user.User;
 import de.inren.data.repositories.health.MeasurementRepository;
 import de.inren.frontend.common.dataprovider.RepositoryDataProvider;
 import de.inren.frontend.common.manage.IWorktopManageDelegate;
@@ -66,6 +67,12 @@ public class ManageMeasurementsPanel extends ManagePanel implements IAdminPanel 
     }
 
     @Override
+    protected void onInitialize() {
+        // TODDO wenn kein user eingelogged zur homepage
+        super.onInitialize();
+    }
+
+    @Override
     protected final Component getTable(final String id) {
         AjaxFallbackDefaultDataTableBuilder<Measurement> builder = new AjaxFallbackDefaultDataTableBuilder<Measurement>(ManageMeasurementsPanel.this);
 
@@ -79,7 +86,8 @@ public class ManageMeasurementsPanel extends ManagePanel implements IAdminPanel 
 
                     @Override
                     public long size() {
-                        return measurementRepository.findByUid(getUser().getId()).size();
+                        User user = getUser();
+                        return user == null ? 0L : measurementRepository.findByUid(user.getId()).size();
                     }
 
                 })

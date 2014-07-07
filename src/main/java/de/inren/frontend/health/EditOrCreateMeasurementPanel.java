@@ -28,6 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
+import de.agilecoders.wicket.extensions.markup.html.bootstrap.form.DateTextField;
 import de.inren.data.domain.health.Measurement;
 import de.inren.frontend.common.manage.IWorktopManageDelegate;
 import de.inren.frontend.common.panel.ABasePanel;
@@ -43,10 +44,11 @@ public class EditOrCreateMeasurementPanel extends ABasePanel implements IAdminPa
     @SpringBean
     private MeasurementService measurementService;
 
-    private IWorktopManageDelegate<Measurement> delegate;
+    private final IWorktopManageDelegate<Measurement> delegate;
 
     public EditOrCreateMeasurementPanel(String id, IModel<Measurement> m, IWorktopManageDelegate<Measurement> delegate) {
-        super(id, (m!=null && m.getObject() != null) ? new CompoundPropertyModel<Measurement>(m.getObject()) : new CompoundPropertyModel<Measurement>(new Measurement()));
+        super(id, (m != null && m.getObject() != null) ? new CompoundPropertyModel<Measurement>(m.getObject()) : new CompoundPropertyModel<Measurement>(
+                new Measurement()));
         this.delegate = delegate;
     }
 
@@ -58,7 +60,7 @@ public class EditOrCreateMeasurementPanel extends ABasePanel implements IAdminPa
 
         StringResourceModel lDate = new StringResourceModel("date.label", EditOrCreateMeasurementPanel.this, null);
         form.add(new Label("date.label", lDate));
-        form.add(new TextField<String>("date", String.class).setRequired(true).setLabel(lDate));
+        form.add(new DateTextField("date").setRequired(true).setLabel(lDate));
 
         StringResourceModel lWeight = new StringResourceModel("weight.label", EditOrCreateMeasurementPanel.this, null);
         form.add(new Label("weight.label", lWeight));
@@ -84,7 +86,10 @@ public class EditOrCreateMeasurementPanel extends ABasePanel implements IAdminPa
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
                 try {
-                    Measurement u = measurementService.saveMeasurement((Measurement) form.getModelObject());
+                    Measurement measurement = (Measurement) form.getModelObject();
+                    measurement.setUid(getUser().getId());
+
+                    Measurement u = measurementService.saveMeasurement(measurement);
                     form.info(new StringResourceModel("feedback.success", EditOrCreateMeasurementPanel.this, null).getString());
                     delegate.switchToComponent(target, delegate.getManagePanel());
                 } catch (Exception e) {
