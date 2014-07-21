@@ -46,7 +46,7 @@ import org.wicketstuff.annotation.scan.AnnotatedMountScanner;
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
 import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchTheme;
-import de.agilecoders.wicket.themes.settings.BootswatchThemeProvider;
+import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchThemeProvider;
 import de.inren.frontend.common.dns.DnsUtil;
 import de.inren.security.BasicAuthenticationSession;
 import de.inren.security.SignInPage;

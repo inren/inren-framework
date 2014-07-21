@@ -67,7 +67,10 @@ public abstract class ABasePanel extends Panel {
         initGui();
     }
 
-    protected abstract void initGui();
+    @Deprecated
+    protected void initGui(){
+    	
+    }
 
     /**
      * @return the feedback panel

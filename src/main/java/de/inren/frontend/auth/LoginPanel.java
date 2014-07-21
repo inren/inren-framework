@@ -16,18 +16,19 @@
  */
 package de.inren.frontend.auth;
 
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.PasswordTextField;
 import org.apache.wicket.markup.html.form.RequiredTextField;
 import org.apache.wicket.markup.html.form.TextField;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.ValueMap;
 
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.BootstrapButton;
+import de.agilecoders.wicket.core.markup.html.bootstrap.button.Buttons;
 import de.inren.frontend.application.ApplicationSettingsUtil;
 import de.inren.frontend.common.panel.ABasePanel;
 
@@ -39,89 +40,78 @@ import de.inren.frontend.common.panel.ABasePanel;
  */
 public class LoginPanel extends ABasePanel {
 
-    public LoginPanel(String id) {
-        super(id);
-    }
+	private TextField<String> email;
+	private PasswordTextField password;
+	private final ValueMap properties = new ValueMap();
 
-    @Override
-    protected void initGui() {
-        final SignInForm signInForm = new SignInForm("form");
+	public LoginPanel(String id) {
+		super(id);
+	}
 
-        signInForm.add(new AjaxLink<Void>("signup") {
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                // TODO Change to signup form
-            }
-        });
+	@Override
+	protected void onInitialize() {
+		super.onInitialize();
+		final Form<Void> signInForm = new Form<Void>("form") {
 
-        signInForm.add(new AjaxButton("submit") {
-            @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> form) {
-                if (getBasicAuthenticationSession().signIn(signInForm.getEmail(), signInForm.getPassword())) {
-                    ApplicationSettingsUtil.applySettings(getUserSettings());
-                    
-                    continueToOriginalDestination();
-                    setResponsePage(getApplication().getHomePage());
-                } else {
-                    form.error(new StringResourceModel("signInFailed", LoginPanel.this, null).getString());
-                }
-            }
+			@Override
+			protected void onInitialize() {
+				super.onInitialize();
+				final StringResourceModel lEmail = new StringResourceModel("email.label", LoginPanel.this, null);
+				add(new Label("email.label", lEmail));
+				email = new RequiredTextField<String>("email", new PropertyModel<String>(properties, "email"), String.class);
+				add(email.setLabel(lEmail));
 
-            @Override
-            protected void onError(AjaxRequestTarget target, Form<?> form) {
-                // target.add(getFeedbackMessages());
-            }
-        });
+				final StringResourceModel lPass = new StringResourceModel("password.label", LoginPanel.this, null);
+				add(new Label("password.label", lPass));
+				password = new PasswordTextField("password", new PropertyModel<String>(properties, "password"));
+				add(password.setType(String.class).setLabel(lPass));
 
-        add(signInForm);
-    }
+				BootstrapButton signInButton = new BootstrapButton("signup", new ResourceModel("signup.label"), Buttons.Type.Link) {
+					@Override
+					public void onSubmit() {
+						// TODO redirect to subscribe page
+						error("Signup not implemented yet.");
+						invalid();
+					}
+				};
+				signInButton.setDefaultFormProcessing(false);
+				add(signInButton);
+				add(new BootstrapButton("submit", new ResourceModel("submit.label"), Buttons.Type.Primary){
+					@Override
+					public void onSubmit() {
+						super.onSubmit();
+						if (getBasicAuthenticationSession().signIn(getEmail(), getPassword())) {
+							ApplicationSettingsUtil.applySettings(getUserSettings());
+							
+							continueToOriginalDestination();
+							setResponsePage(getApplication().getHomePage());
+						} else {
+							error(new StringResourceModel("signInFailed", LoginPanel.this, null).getString());
+						}
+					}
+					
+				});
+			}
+		};
+		add(signInForm);
+	}
 
-    private static final class SignInForm extends Form<Void> {
-        private final ValueMap properties = new ValueMap();
+	/**
+	 * Convenience method to access the password.
+	 * 
+	 * @return The password
+	 */
+	public String getPassword() {
+		return password.getInput();
+	}
 
-        private TextField<String> email;
-        private PasswordTextField password;
+	/**
+	 * Convenience method to access the email.
+	 * 
+	 * @return The email
+	 */
+	public String getEmail() {
+		return email.getDefaultModelObjectAsString();
+	}
 
-        public SignInForm(final String id) {
-            super(id);
-        }
-
-        @Override
-        protected void onBeforeRender() {
-            if (!hasBeenRendered()) {
-                initForm();
-            }
-            super.onBeforeRender();
-        }
-
-        private void initForm() {
-            StringResourceModel lEmail = new StringResourceModel("email.label", SignInForm.this, null);
-            add(new Label("email.label", lEmail));
-            email = new RequiredTextField<String>("email", new PropertyModel<String>(properties, "email"), String.class);
-            add(email.setLabel(lEmail));
-
-            StringResourceModel lPass = new StringResourceModel("password.label", SignInForm.this, null);
-            add(new Label("password.label", lPass));
-            password = new PasswordTextField("password", new PropertyModel<String>(properties, "password"));
-            add(password.setType(String.class).setLabel(lPass));
-        }
-
-        /**
-         * Convenience method to access the password.
-         * 
-         * @return The password
-         */
-        public String getPassword() {
-            return password.getInput();
-        }
-
-        /**
-         * Convenience method to access the email.
-         * 
-         * @return The email
-         */
-        public String getEmail() {
-            return email.getDefaultModelObjectAsString();
-        }
-    }
 }

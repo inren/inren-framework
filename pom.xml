@@ -78,7 +78,7 @@
 		
 		<wicket.version>6.16.0</wicket.version>
 		<wicket-webjars.version>0.4.2</wicket-webjars.version>
-		<wicket-bootstrap.version>0.9.4</wicket-bootstrap.version>
+		<wicket-bootstrap.version>0.9.5</wicket-bootstrap.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
          <lowagie.itext.version>2.1.7</lowagie.itext.version>
 		

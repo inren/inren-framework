@@ -18,18 +18,30 @@
 -->
 <html xmlns:wicket>
 <wicket:panel>
-	<form wicket:id="form">
+	<form class="form-horizontal" wicket:id="form">
 		<fieldset>
-			<legend><wicket:message key="headline">[login]</wicket:message></legend>
-			<ol>
-				<li><label for="username" wicket:id="email.label">[email]</label>
-					<input wicket:id="email" name="email" type="text" value="foo@goo.moo" class="text" /></li>
-				<li><label for="password" wicket:id="password.label">[password]</label>
-					<input wicket:id="password" name="password" type="password" value="password" class="text" /></li>
-			</ol>
+			<legend>
+				<wicket:message key="headline">[login]</wicket:message>
+			</legend>
+			<div class="form-group">
+				<label for="username" class="control-label col-sm-2"
+					wicket:id="email.label">[email]</label>
+				<div class="col-sm-4">
+					<input wicket:id="email" name="email" type="text"
+						value="foo@goo.moo" class="form-control" />
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="password" class="control-label col-sm-2"
+					wicket:id="password.label">[password]</label>
+				<div class="col-sm-4">
+					<input wicket:id="password" name="password" type="password"
+						value="password" class="form-control" />
+				</div>
+			</div>
 		</fieldset>
-		<button wicket:id="submit"><wicket:message key="submit.label">[submit]</wicket:message></button>
-		<button wicket:id="signup"><wicket:message key="signup.label">[signup]</wicket:message></button>
+		<button wicket:id="submit">[submit]</button>
+		<button wicket:id="signup">[signup]</button>
 	</form>
 </wicket:panel>
 </html>
