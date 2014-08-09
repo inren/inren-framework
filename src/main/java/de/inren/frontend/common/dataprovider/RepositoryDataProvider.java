@@ -69,16 +69,20 @@ public class RepositoryDataProvider<T extends Serializable> extends SortableData
     }
 
     protected Page<T> getPage(final Pageable pageable) {
-        return repository.findAll(pageable);
+        return getRepository().findAll(pageable);
     }
 
     @Override
     public long size() {
-        return repository.count();
+        return getRepository().count();
     }
 
     @Override
     public IModel<T> model(T object) {
         return new Model<T>(object);
     }
+
+	public PagingAndSortingRepository<T, ? extends Serializable> getRepository() {
+		return repository;
+	}
 }

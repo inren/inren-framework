@@ -41,6 +41,7 @@ import de.inren.frontend.health.PlotFatPage;
 import de.inren.frontend.health.PlotWaterPage;
 import de.inren.frontend.health.PlotWeightPage;
 import de.inren.frontend.health.backup.BackupRestorePage;
+import de.inren.frontend.log4j.ManageLoggerSettingsPage;
 import de.inren.frontend.mailserver.ManageMailserverPage;
 import de.inren.frontend.right.ManageRightsPage;
 import de.inren.frontend.role.ManageRolesPage;
@@ -197,6 +198,9 @@ public class NavigationProvider {
                                         Arrays.asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
 
                                 new GNode<NavigationElement>(new NavigationElement(ManageDbPropertiesPage.class, "DbProperty.label", Arrays
+                                        .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
+                                
+                                new GNode<NavigationElement>(new NavigationElement(ManageLoggerSettingsPage.class, "Logger.label", Arrays
                                         .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)))))
                 .addChild(
                         new GNode<NavigationElement>(new NavigationElement(UserSettingsPage.class, "Settings.label", Arrays.asList(Roles.ROLE_USER.name(),

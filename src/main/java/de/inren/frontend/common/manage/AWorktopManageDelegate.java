@@ -29,9 +29,9 @@ import de.inren.frontend.common.panel.WorktopPanel;
  */
 public abstract class AWorktopManageDelegate<T extends Serializable> implements IWorktopManageDelegate<T> {
 
-    private WorktopPanel panel;
+    private WorktopPanel<T> panel;
 
-    public AWorktopManageDelegate(WorktopPanel panel) {
+    public AWorktopManageDelegate(WorktopPanel<T> panel) {
         this.panel = panel;
     }
 
@@ -42,7 +42,7 @@ public abstract class AWorktopManageDelegate<T extends Serializable> implements 
         panel.addOrReplace(replacement);
     }
 
-    public WorktopPanel getPanel() {
+    public WorktopPanel<T> getPanel() {
         return panel;
     }
 }

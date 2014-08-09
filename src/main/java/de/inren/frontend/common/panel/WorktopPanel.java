@@ -16,6 +16,8 @@
  */
 package de.inren.frontend.common.panel;
 
+import java.io.Serializable;
+
 import org.apache.wicket.markup.html.panel.Panel;
 
 import de.inren.frontend.common.manage.IWorktopManageDelegate;
@@ -26,10 +28,10 @@ import de.inren.frontend.common.manage.IWorktopManageDelegate;
  * @author Ingo Renner
  *
  */
-public class WorktopPanel extends Panel {
+public class WorktopPanel<T extends Serializable> extends Panel {
 
     private final String COMPONENT_ID = "WorktopPanelId";
-    private IWorktopManageDelegate delegate;
+    private IWorktopManageDelegate<T> delegate;
 
     public WorktopPanel(String id) {	
 	super(id);
@@ -40,14 +42,12 @@ public class WorktopPanel extends Panel {
     }
     
     @Override
-    protected void onConfigure() {
-        super.onConfigure();
-        if (!hasBeenRendered()) {
-            add(delegate.getManagePanel());
-        }
+    protected void onInitialize() {
+    	super.onInitialize();
+        add(delegate.getManagePanel());
     }
 
-    public void setDelegate(IWorktopManageDelegate delegate) {
+    public void setDelegate(IWorktopManageDelegate<T> delegate) {
         this.delegate = delegate;
     }
 }
