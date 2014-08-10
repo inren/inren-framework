@@ -20,8 +20,10 @@ package de.inren.service.security;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.SimpleBeanDefinitionRegistry;
@@ -31,6 +33,8 @@ import org.springframework.core.type.filter.TypeFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.inren.data.domain.security.ComponentAccess;
+import de.inren.data.repositories.security.ComponentAccessRepository;
 import de.inren.frontend.common.templates.SecuredPage;
 
 /**
@@ -40,48 +44,66 @@ import de.inren.frontend.common.templates.SecuredPage;
 @Service(value = "componentAccessService")
 @Transactional(readOnly = true)
 public class ComponentAccessServiceImpl implements ComponentAccessService {
-    private final static Logger log = LoggerFactory.getLogger(ComponentAccessServiceImpl.class);
+	private final static Logger log = LoggerFactory
+			.getLogger(ComponentAccessServiceImpl.class);
 
-    private boolean initDone = false;
+	@Autowired
+    private ComponentAccessRepository componentAccessRepository;
 
-    private BeanDefinitionRegistry beanDefinitionRegistry;
+	private boolean initDone = false;
 
-    private void initBeanDefinitionRegistry() {
-        beanDefinitionRegistry = new SimpleBeanDefinitionRegistry();
-        ClassPathBeanDefinitionScanner beanDefinitionScanner = new ClassPathBeanDefinitionScanner(beanDefinitionRegistry);
+	private BeanDefinitionRegistry beanDefinitionRegistry;
 
-        TypeFilter typeFilter = new AssignableTypeFilter(SecuredPage.class);
-        beanDefinitionScanner.addIncludeFilter(typeFilter);
-        beanDefinitionScanner.setIncludeAnnotationConfig(false);
-        beanDefinitionScanner.scan("de.inren.frontend");
-    }
+	private void initBeanDefinitionRegistry() {
+		beanDefinitionRegistry = new SimpleBeanDefinitionRegistry();
+		ClassPathBeanDefinitionScanner beanDefinitionScanner = new ClassPathBeanDefinitionScanner(
+				beanDefinitionRegistry);
 
-    @Override
-    public void init() {
-        log.info("ComponentAccessService init start.");
-        initBeanDefinitionRegistry();
+		TypeFilter typeFilter = new AssignableTypeFilter(SecuredPage.class);
+		beanDefinitionScanner.addIncludeFilter(typeFilter);
+		beanDefinitionScanner.setIncludeAnnotationConfig(false);
+		beanDefinitionScanner.scan("de.inren.frontend");
+	}
 
-        List<String> components = Arrays.asList(findPages());
+	@Override
+	public void init() {
+		if (!initDone) {
+			log.info("ComponentAccessService init start.");
+			initBeanDefinitionRegistry();
 
-        log.info("Pages = " + (components == null ? "no pages found." : components));
+			List<String> components = Arrays.asList(findPages());
 
-        if (components != null) {
-            for (String page : components) {
-                try {
-                    BeanDefinition bd = beanDefinitionRegistry.getBeanDefinition(page);
-                    log.info("found page: " + page + " Definition: " + bd.toString());
-                } catch (Exception e) {
-                    log.error("failed to initialize service", e);
-                }
-            }
-        }
-        initDone = true;
-        log.info("ComponentAccessService init done.");
+			log.info("Pages = "	+ (components == null ? "no pages found." : components));
 
-    }
+			if (components != null) {
+				for (String page : components) {
+					try {
+						BeanDefinition bd = beanDefinitionRegistry.getBeanDefinition(page);
+						log.info("found page: " + page + " Definition: " + bd.toString());
+						if(componentAccessRepository.findComponentAccessByName(page)==null) {
+							// create entry for new component
+							ComponentAccess componentAccess = new ComponentAccess();
+							componentAccess.setName(page);
+							componentAccessRepository.save(componentAccess);
+						}
+					} catch (Exception e) {
+						log.error("failed to initialize service", e);
+					}
+				}
+			}
+			initDone = true;
+			log.info("ComponentAccessService init done.");
+		}
 
-    private String[] findPages() {
-        String[] beans = beanDefinitionRegistry.getBeanDefinitionNames();
-        return beans;
-    }
+	}
+
+	private String[] findPages() {
+		String[] beans = beanDefinitionRegistry.getBeanDefinitionNames();
+		return beans;
+	}
+
+	@Override
+	public ComponentAccess save(ComponentAccess componentAccess) {
+		return componentAccessRepository.save(componentAccess);
+	}
 }

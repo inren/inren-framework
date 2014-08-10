@@ -50,7 +50,10 @@ public abstract class AuthorizedDomainObject extends DomainObject implements Acc
     }
 
     /**
-     * Return all roles from getRoles plus roles the object gets from groups.
+     * Return all roles from getRoles.
+     * 
+     * If your object gets more roles (from groups for example), you
+     * must override this method and add the roles there.
      */
     @Override
     public Collection<Role> getGrantedRoles() {

@@ -32,6 +32,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.NavbarButton;
 import de.inren.frontend.admin.AdminPage;
 import de.inren.frontend.application.HomePage;
 import de.inren.frontend.auth.LoginPage;
+import de.inren.frontend.componentaccess.ManageComponentAccessPage;
 import de.inren.frontend.dbproperty.ManageDbPropertiesPage;
 import de.inren.frontend.group.ManageGroupsPage;
 import de.inren.frontend.health.BmiWikiPage;
@@ -191,6 +192,9 @@ public class NavigationProvider {
                                 new GNode<NavigationElement>(new NavigationElement(ManageRightsPage.class, "Rights.label", Arrays.asList(Roles.ROLE_ADMIN
                                         .name()), ComponentPosition.LEFT)),
 
+                                new GNode<NavigationElement>(new NavigationElement(ManageComponentAccessPage.class, "ComponentAccess.label", Arrays.asList(Roles.ROLE_ADMIN
+                                        .name()), ComponentPosition.LEFT)),                                                                               
+                                        
                                 new GNode<NavigationElement>(new NavigationElement(ManageMailserverPage.class, "MailServer.label", Arrays
                                         .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
 

@@ -17,23 +17,26 @@
 /**
  * 
  */
-package de.inren.frontend.common.panel;
+package de.inren.frontend.componentaccess;
 
-import org.apache.wicket.markup.html.form.ListChoice;
-import org.apache.wicket.markup.html.panel.Panel;
+import org.apache.wicket.Component;
+import org.wicketstuff.annotation.mount.MountPath;
+
+import de.inren.data.domain.security.ComponentAccess;
+import de.inren.frontend.common.panel.WorktopPanel;
+import de.inren.frontend.common.templates.SecuredPage;
 
 /**
  * @author Ingo Renner
  *
  */
-public class ListChoiceMarkupContainer extends Panel {
+@MountPath(value = "/componentaccess")
+public class ManageComponentAccessPage extends SecuredPage<ComponentAccess> {
 
-	public static final String CHOICES_ID = "choices";
-	
-	
-	public ListChoiceMarkupContainer(String id, ListChoice<String> listChoice) {
-		super(id);
-		add(listChoice);
-	}	
-	
+    @Override
+    public Component createPanel(String wicketId) {
+        final WorktopPanel<ComponentAccess> w = new WorktopPanel<ComponentAccess>(wicketId);
+        w.setDelegate(new ComponentAccessWorktopManageDelegate(w));
+        return w;
+    }
 }

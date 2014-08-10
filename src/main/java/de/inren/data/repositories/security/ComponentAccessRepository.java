@@ -17,10 +17,14 @@
 
 package de.inren.data.repositories.security;
 
+import org.springframework.data.repository.PagingAndSortingRepository;
+
+import de.inren.data.domain.security.ComponentAccess;
+
 /**
  * @author Ingo Renner
  *
  */
-public interface ComponentAccessRepository {
-
+public interface ComponentAccessRepository extends PagingAndSortingRepository<ComponentAccess, Long> {
+	ComponentAccess findComponentAccessByName(String name);
 }

@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
@@ -30,27 +29,19 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import de.inren.data.domain.core.DomainObject;
-
 /**
  * @author Ingo Renner
  *
  */
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity(name = "ComponentAccess")
-public class ComponentAccess extends DomainObject {
+public class ComponentAccess extends AuthorizedDomainObject {
 
     public ComponentAccess() {
     }
 
     @Column(nullable = false, unique = true)
     private String name;
-
-    @ElementCollection
-    private Collection<String> grantedAuthorities;
-
-    @Transient
-    private Set<SimpleGrantedAuthority> authorities;
 
     public String getName() {
         return name;
@@ -60,17 +51,21 @@ public class ComponentAccess extends DomainObject {
         this.name = name;
     }
 
+    @Transient
+    private Set<SimpleGrantedAuthority> authorities;
+    
     public Collection<SimpleGrantedAuthority> getAuthorities() {
         if (authorities == null) {
             initAuthorities();
         }
         return authorities;
     }
-
+    
     private void initAuthorities() {
         this.authorities = new HashSet<SimpleGrantedAuthority>();
-        for (String auth : grantedAuthorities) {
-            authorities.add(new SimpleGrantedAuthority(auth));
+        Collection<Role> roles = getGrantedRoles();
+        for (Role role : roles) {
+            authorities.addAll(role.asAuthority());
         }
     }
 
@@ -79,8 +74,6 @@ public class ComponentAccess extends DomainObject {
         StringBuilder builder = new StringBuilder();
         builder.append("ComponentAccess [name=");
         builder.append(name);
-        builder.append(", grantedAuthorities=");
-        builder.append(grantedAuthorities);
         builder.append(", authorities=");
         builder.append(authorities);
         builder.append("]");
