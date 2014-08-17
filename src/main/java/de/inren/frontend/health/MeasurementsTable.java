@@ -64,6 +64,8 @@ public class MeasurementsTable extends Panel {
 	columns.add(new HealthColumn<Measurement>(new Model<String>("weight"), "weight", "weight"));
 	columns.add(new HealthColumn<Measurement>(new Model<String>("fat"), "fat", "fat"));
 	columns.add(new HealthColumn<Measurement>(new Model<String>("water"), "water","water"));
+	columns.add(new HealthColumn<Measurement>(new Model<String>("muscle"), "muscle","muscle"));
+	columns.add(new HealthColumn<Measurement>(new Model<String>("bone"), "bone","bone"));
 
 	ISortableDataProvider<Measurement, String> dataProvider = new RepositoryDataProvider<Measurement>(measurementRepository);
 	

@@ -184,7 +184,8 @@ public class InRenApplication extends AuthenticatedWebApplication {
                     return super.getString(key, component, model, locale, style, defaultValue);
                 } catch (MissingResourceException e) {
                     log.info("######### Missing: " + e.getMessage());
-                    return key + (locale == null ? "" : locale.getLanguage());
+                    final String text = key + (locale == null ? "" : locale.getLanguage());
+					return "[" + text +"]";
                 }
             }
 

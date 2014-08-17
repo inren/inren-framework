@@ -151,9 +151,12 @@ public class ManageMeasurementsPanel extends ManagePanel implements IAdminPanel 
                 // .addPropertyColumn("weight", true)
                 // .addPropertyColumn("fat", true)
                 // .addPropertyColumn("water", true)
-                .add(new HealthColumn<Measurement>(new Model<String>("weight"), "weight", "weight"))
-                .add(new HealthColumn<Measurement>(new Model<String>("fat"), "fat", "fat"))
-                .add(new HealthColumn<Measurement>(new Model<String>("water"), "water", "water")).setNumberOfRows(10)
+                .add(new HealthColumn<Measurement>(new StringResourceModel("weight.label", ManageMeasurementsPanel.this, null), "weight", "weight"))
+                .add(new HealthColumn<Measurement>(new StringResourceModel("fat.label", ManageMeasurementsPanel.this, null), "fat", "fat"))
+                .add(new HealthColumn<Measurement>(new StringResourceModel("water.label", ManageMeasurementsPanel.this, null), "water", "water"))
+                .add(new HealthColumn<Measurement>(new StringResourceModel("muscle.label", ManageMeasurementsPanel.this, null), "muscle","muscle"))
+                .add(new HealthColumn<Measurement>(new StringResourceModel("bone.label", ManageMeasurementsPanel.this, null), "bone","bone"))
+                .setNumberOfRows(10)
 
                 .build(id);
         TableBehavior tableBehavior = new TableBehavior().bordered().condensed();

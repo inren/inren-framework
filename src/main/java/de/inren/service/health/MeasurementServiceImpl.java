@@ -121,10 +121,14 @@ public class MeasurementServiceImpl implements MeasurementService {
             measurement.setWeightDelta(measurement.getWeight() - prev.getWeight());  
             measurement.setFatDelta(measurement.getFat() - prev.getFat());  
             measurement.setWaterDelta(measurement.getWater() - prev.getWater());
+            measurement.setMuscleDelta(measurement.getMuscle() - prev.getMuscle());
+            measurement.setBoneDelta(measurement.getBone() - prev.getBone());
         } else {
             measurement.setWeightDelta(0);  
             measurement.setFatDelta(0);  
             measurement.setWaterDelta(0);
+            measurement.setMuscle(0);
+            measurement.setBone(0);
         }
     }
    

@@ -34,7 +34,7 @@ import de.inren.data.domain.core.DomainObject;
  */
 @Entity
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-@Table(name = "measurement", uniqueConstraints = @UniqueConstraint(columnNames = "uid"))
+@Table(name = "measurement")
 
 public class Measurement extends DomainObject {
 
@@ -61,6 +61,19 @@ public class Measurement extends DomainObject {
 
 	@Column(name = "waterDelta")
 	private double waterDelta;
+
+	@Column(name = "muscle")
+	private double muscle;
+
+	@Column(name = "muscleDelta")
+	private double muscleDelta;
+
+	@Column(name = "bone")
+	private double bone;
+
+	@Column(name = "boneDelta")
+	private double boneDelta;
+
 
 	public long getUid() {
 		return uid;
@@ -126,16 +139,46 @@ public class Measurement extends DomainObject {
 		this.waterDelta = waterDelta;
 	}
 
+	public double getMuscle() {
+		return muscle;
+	}
+
+	public void setMuscle(double muscle) {
+		this.muscle = muscle;
+	}
+
+	public double getMuscleDelta() {
+		return muscleDelta;
+	}
+
+	public void setMuscleDelta(double muscleDelta) {
+		this.muscleDelta = muscleDelta;
+	}
+
+	public double getBone() {
+		return bone;
+	}
+
+	public void setBone(double bone) {
+		this.bone = bone;
+	}
+
+	public double getBoneDelta() {
+		return boneDelta;
+	}
+
+	public void setBoneDelta(double boneDelta) {
+		this.boneDelta = boneDelta;
+	}
+
 	@Override
 	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Measurement [uid=").append(uid).append(", date=")
-				.append(date).append(", weight=").append(weight)
-				.append(", weightDelta=").append(weightDelta).append(", fat=")
-				.append(fat).append(", fatDelta=").append(fatDelta)
-				.append(", water=").append(water).append(", waterDelta=")
-				.append(waterDelta).append(", toString()=")
-				.append(super.toString()).append("]");
-		return builder.toString();
+		return "Measurement [uid=" + uid + ", date=" + date + ", weight="
+				+ weight + ", weightDelta=" + weightDelta + ", fat=" + fat
+				+ ", fatDelta=" + fatDelta + ", water=" + water
+				+ ", waterDelta=" + waterDelta + ", muscle=" + muscle
+				+ ", muscleDelta=" + muscleDelta + ", bone=" + bone
+				+ ", boneDelta=" + boneDelta + "]";
 	}
+
 }

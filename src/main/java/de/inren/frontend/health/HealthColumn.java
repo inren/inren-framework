@@ -24,6 +24,7 @@ import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 
@@ -41,8 +42,8 @@ public class HealthColumn<Measurement> extends PropertyColumn<Measurement, Strin
 
     @Override
     public void populateItem(Item<ICellPopulator<Measurement>> item, String componentId, IModel<Measurement> rowModel) {
-        item.add(new MeasurementTabEntryPanel<Measurement>(componentId, rowModel, getDisplayModel()));
-        PropertyModel<Double> pm = new PropertyModel<Double>(rowModel, getDisplayModel().getObject() + "Delta");
+        item.add(new MeasurementTabEntryPanel<Measurement>(componentId, rowModel, Model.of(getPropertyExpression())));
+        PropertyModel<Double> pm = new PropertyModel<Double>(rowModel, getPropertyExpression() + "Delta");
         item.add(getHealthBehavior());
         item.add(getCss(pm.getObject()));
     }

@@ -74,6 +74,14 @@ public class EditOrCreateMeasurementPanel extends ABasePanel implements IAdminPa
         form.add(new Label("water.label", lWater));
         form.add(new TextField<String>("water", String.class).setRequired(true).setLabel(lWater));
 
+        StringResourceModel lMuscle = new StringResourceModel("muscle.label", EditOrCreateMeasurementPanel.this, null);
+        form.add(new Label("muscle.label", lMuscle));
+        form.add(new TextField<String>("muscle", String.class).setRequired(true).setLabel(lMuscle));
+
+        StringResourceModel lBone = new StringResourceModel("bone.label", EditOrCreateMeasurementPanel.this, null);
+        form.add(new Label("bone.label", lBone));
+        form.add(new TextField<String>("bone", String.class).setRequired(true).setLabel(lBone));
+
         form.add(new AjaxLink<Void>("cancel") {
             @Override
             public void onClick(AjaxRequestTarget target) {
