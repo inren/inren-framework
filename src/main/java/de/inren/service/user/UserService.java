@@ -46,4 +46,6 @@ public interface UserService extends UserDetailsService, Initializable {
 
 	User loadUserByEmail(String email);
 
+	List<User> search(User u);
+
 }

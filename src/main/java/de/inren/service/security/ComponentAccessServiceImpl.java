@@ -17,6 +17,7 @@
 
 package de.inren.service.security;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,4 +107,15 @@ public class ComponentAccessServiceImpl implements ComponentAccessService {
 	public ComponentAccess save(ComponentAccess componentAccess) {
 		return componentAccessRepository.save(componentAccess);
 	}
+	
+	@Override
+	public List<ComponentAccess> getComponentAccessList() {
+		List<ComponentAccess> res = new ArrayList<ComponentAccess>();
+		Iterable<ComponentAccess> all = componentAccessRepository.findAll();
+		for (ComponentAccess componentAccess : all) {
+			res.add(componentAccess);
+		}
+		return res;
+	}
+	
 }

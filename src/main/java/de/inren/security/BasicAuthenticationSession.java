@@ -86,7 +86,7 @@ public class BasicAuthenticationSession extends AuthenticatedWebSession {
         }
         return resultRoles;
     }
-
+    
     @Override
     public void signOut() {
         super.signOut();

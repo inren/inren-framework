@@ -16,8 +16,9 @@
  */
 package de.inren.service.user;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+
+import java.util.List;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -88,7 +89,6 @@ public class UserServiceTest extends InRenJUnit4SpringContextTests {
         userService.save(userNewPwd);
         User userRestored = userService.authenticateUser("admin@localhost", "geheim");
         assertNotNull(userRestored);
-
     }
 
     @Test
@@ -100,4 +100,26 @@ public class UserServiceTest extends InRenJUnit4SpringContextTests {
         assertTrue(!user.getAuthorities().isEmpty());
     }
 
+    @Test
+    public void testSpecification() {
+    	createTestUsers(10);
+    	User u = new User();
+    	u.setFirstname("firstname2");
+    	List<User> res = userService.search(u);
+    	assertTrue(res.size()==1);
+    	assertEquals(res.get(0).getFirstname(), "firstname2");
+    }
+
+	private void createTestUsers(int nr) {
+		for (int i = 0; i < nr; i++) {
+			User u = new User();
+			u.setEmail("aa"+i);
+	    	u.setPassword("geheim");
+			u.setFirstname("firstname"+i);
+			u.setLastname("lastname"+i);
+			userService.save(u);
+		}
+		
+	}
+    
 }

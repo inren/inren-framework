@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.inren.data.domain.security.Role;
 import de.inren.data.domain.user.User;
+import de.inren.data.domain.user.UserSpecification;
 import de.inren.data.repositories.user.UserRepository;
 import de.inren.service.group.GroupService;
 import de.inren.service.security.RoleService;
@@ -151,4 +152,10 @@ public class UserServiceImpl implements UserService {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public List<User> search(User userFilter) {
+		UserSpecification us = new UserSpecification(userFilter);
+		return (List<User>) userRepository.findAll(us);
+	}
 }

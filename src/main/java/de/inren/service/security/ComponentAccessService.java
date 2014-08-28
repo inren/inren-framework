@@ -17,6 +17,8 @@
 
 package de.inren.service.security;
 
+import java.util.List;
+
 import de.inren.data.domain.security.ComponentAccess;
 import de.inren.service.Initializable;
 
@@ -27,5 +29,7 @@ import de.inren.service.Initializable;
 public interface ComponentAccessService extends Initializable {
 
 	ComponentAccess save(ComponentAccess componentAccess);
+
+	List<ComponentAccess> getComponentAccessList();
 
 }

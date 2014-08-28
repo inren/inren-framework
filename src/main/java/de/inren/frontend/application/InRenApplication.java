@@ -16,6 +16,8 @@
  */
 package de.inren.frontend.application;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
@@ -47,10 +49,13 @@ import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
 import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchTheme;
 import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchThemeProvider;
+import de.inren.data.domain.security.ComponentAccess;
+import de.inren.data.domain.security.Role;
 import de.inren.frontend.common.dns.DnsUtil;
 import de.inren.security.BasicAuthenticationSession;
 import de.inren.security.SignInPage;
 import de.inren.service.Initializable;
+import de.inren.service.security.ComponentAccessService;
 import de.inren.service.user.UserService;
 
 /**
@@ -64,6 +69,9 @@ public class InRenApplication extends AuthenticatedWebApplication {
     @SpringBean
     UserService userService;
 
+    @SpringBean
+    ComponentAccessService componentAccessService;
+    
     public InRenApplication() {
         super();
     }
@@ -127,7 +135,19 @@ public class InRenApplication extends AuthenticatedWebApplication {
         // MetaDataRoleAuthorizationStrategy.authorize(AdminOnlyPage.class,
         // Roles.ADMIN);
         // mountPage("admin", AdminOnlyPage.class);
-
+        
+        
+        // TODO das funzzt nur auf Class
+        
+//        LIST<COMPONENTACCESS> COMPONENTACCESS = COMPONENTACCESSSERVICE.GETCOMPONENTACCESSLIST();
+//        FOR (COMPONENTACCESS CA : COMPONENTACCESS) {
+//        	 COLLECTION<ROLE> ROLES = CA.GETGRANTEDROLES();
+//        	 STRINGBUFFER ROLESTRING = NEW STRINGBUFFER();
+//        	 FOR (ROLE ROLE : ROLES) {
+//        		 ROLESTRING.APPEND(ROLE);
+//			}
+//        	 METADATAROLEAUTHORIZATIONSTRATEGY.AUTHORIZE(CA.GETNAME(), ROLESTRING.TOSTRING());
+//		}
     }
 
     /**

@@ -17,6 +17,7 @@
 package de.inren.frontend.health;
 
 import org.apache.wicket.Component;
+import org.apache.wicket.authroles.authorization.strategies.role.annotations.AuthorizeInstantiation;
 import org.wicketstuff.annotation.mount.MountPath;
 
 import de.inren.data.domain.health.Measurement;
@@ -28,6 +29,7 @@ import de.inren.frontend.common.templates.SecuredPage;
  * 
  */
 @MountPath(value = "/measurements")
+@AuthorizeInstantiation("ROLE_TEST")
 public class ManageMeasurementsPage extends SecuredPage<Measurement> {
 
     @Override
