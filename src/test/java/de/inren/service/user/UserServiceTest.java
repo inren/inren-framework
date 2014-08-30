@@ -101,13 +101,49 @@ public class UserServiceTest extends InRenJUnit4SpringContextTests {
     }
 
     @Test
-    public void testSpecification() {
+    public void testSpecificationFullMatch() {
+    	createTestUsers(10);
+    	User u = new User();
+    	u.setFirstname("firstname2Blah");
+    	List<User> res = userService.search(u);
+    	assertEquals(1, res.size());
+    	assertEquals(res.get(0).getFirstname(), "firstname2Blah");
+    }
+
+    @Test
+    public void testSpecificationPartMatchFails() {
     	createTestUsers(10);
     	User u = new User();
     	u.setFirstname("firstname2");
     	List<User> res = userService.search(u);
-    	assertTrue(res.size()==1);
-    	assertEquals(res.get(0).getFirstname(), "firstname2");
+    	assertEquals(0, res.size());
+    }
+    
+    @Test
+    public void testSpecificationWildcard() {
+    	createTestUsers(10);
+    	User u = new User();
+    	u.setFirstname("firstname2%");
+    	List<User> res = userService.search(u);
+    	assertEquals(1, res.size());
+    	assertEquals(res.get(0).getFirstname(), "firstname2Blah");
+
+    	u.setFirstname("firstname%Blah");
+    	res.clear();
+    	res = userService.search(u);
+    	assertEquals(10, res.size());
+    	
+    	u.setFirstname("%2%");
+    	res.clear();
+    	res = userService.search(u);
+    	assertEquals(1, res.size());
+    	assertEquals(res.get(0).getFirstname(), "firstname2Blah");
+    	
+    	u.setFirstname("%2Blah");
+    	res.clear();
+    	res = userService.search(u);
+    	assertEquals(1, res.size());
+    	assertEquals(res.get(0).getFirstname(), "firstname2Blah");
     }
 
 	private void createTestUsers(int nr) {
@@ -115,9 +151,11 @@ public class UserServiceTest extends InRenJUnit4SpringContextTests {
 			User u = new User();
 			u.setEmail("aa"+i);
 	    	u.setPassword("geheim");
-			u.setFirstname("firstname"+i);
+			u.setFirstname("firstname"+i+"Blah");
 			u.setLastname("lastname"+i);
-			userService.save(u);
+			if(userService.loadUserByEmail(u.getEmail())==null) {
+				userService.save(u);
+			}
 		}
 		
 	}

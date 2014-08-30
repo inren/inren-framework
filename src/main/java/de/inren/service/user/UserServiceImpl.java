@@ -149,8 +149,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User loadUserByEmail(String email) {
-        // TODO Auto-generated method stub
-        return null;
+        return userRepository.findByEmail(email);
     }
 
 	@Override

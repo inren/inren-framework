@@ -44,8 +44,7 @@ public class UserSpecification implements Specification<User> {
 		List<Predicate> predicates = new ArrayList<Predicate>();
 		if(filter.getFirstname()!=null) {
 			if(filter.getFirstname().contains("%")){
-				// TODO wie geht das???
-				//predicates.add(cb.like(new Expression<String>"firstname"),filter.getFirstname()));
+				predicates.add(cb.like(root.get("firstname"),filter.getFirstname()));
 			} else {
 				predicates.add(cb.equal(root.get("firstname"),filter.getFirstname()));
 			}
