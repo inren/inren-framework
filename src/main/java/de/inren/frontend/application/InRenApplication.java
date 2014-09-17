@@ -16,11 +16,11 @@
  */
 package de.inren.frontend.application;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
+
+import net.ftlines.wicketsource.WicketSource;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
@@ -49,8 +49,6 @@ import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
 import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchTheme;
 import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchThemeProvider;
-import de.inren.data.domain.security.ComponentAccess;
-import de.inren.data.domain.security.Role;
 import de.inren.frontend.common.dns.DnsUtil;
 import de.inren.security.BasicAuthenticationSession;
 import de.inren.security.SignInPage;
@@ -101,6 +99,8 @@ public class InRenApplication extends AuthenticatedWebApplication {
         initializeFailSafeLocalize();
         new AnnotatedMountScanner().scanPackage("de.inren").mount(this);
 
+        WicketSource.configure(this);
+        
         // TODO gehört ins codeflower package. => Init für Wicket module/packages machen.
         final IPackageResourceGuard packageResourceGuard = getResourceSettings().getPackageResourceGuard();
         if (packageResourceGuard instanceof SecurePackageResourceGuard) {
@@ -203,7 +203,9 @@ public class InRenApplication extends AuthenticatedWebApplication {
                 try {
                     return super.getString(key, component, model, locale, style, defaultValue);
                 } catch (MissingResourceException e) {
-                    log.info("######### Missing: " + e.getMessage());
+                	String variation = (component != null ? component.getVariation() : null);
+                	String cacheKey = getCacheKey(key, component, locale, style, variation);
+                    log.info("######### Missing: cacheKey=[" + cacheKey + "] " + e.getMessage());
                     final String text = key + (locale == null ? "" : locale.getLanguage());
 					return "[" + text +"]";
                 }

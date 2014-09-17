@@ -107,7 +107,6 @@ public class TemplatePage<T> extends GenericWebPage<T> {
         add(new FeedbackPanel("feedbackPanel").setOutputMarkupId(true));
 
         add(new BootstrapBaseBehavior());
-        add(new Code("code-internal"));
     }
 
     /**

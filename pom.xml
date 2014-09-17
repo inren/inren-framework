@@ -62,19 +62,19 @@
 		<!-- Versions sorted by name -->
 		<bonecp.version>0.8.0.RELEASE</bonecp.version>
 		<log4j.version>1.2.16</log4j.version>
-		<hibernate.version>4.3.5.Final</hibernate.version>
+		<hibernate.version>4.3.6.Final</hibernate.version>
 		<h2.version>1.3.175</h2.version>
 		<ehcache.version>2.7.0</ehcache.version>
-		<java-melody.version>1.51.0</java-melody.version>
+		<java-melody.version>1.52.0</java-melody.version>
 		<jetty.version>7.6.13.v20130916</jetty.version>
 		<joda-time.version>2.3</joda-time.version>
 		<junit.version>4.11</junit.version>
 		<postgresql.version>9.1-901.jdbc4</postgresql.version>
 		<slf4j.version>1.6.4</slf4j.version>
-		<spring.version>4.0.5.RELEASE</spring.version>
-		<spring-data.version>1.6.0.RELEASE</spring-data.version>
-		<spring-security.version>3.2.4.RELEASE</spring-security.version>
-		<spring.context.version>4.0.2.RELEASE</spring.context.version>
+		<spring.version>4.0.6.RELEASE</spring.version>
+		<spring-data.version>1.6.4.RELEASE</spring-data.version>
+		<spring-security.version>3.2.5.RELEASE</spring-security.version>
+		<spring.context.version>4.0.6.RELEASE</spring.context.version>
 		
 		<wicket.version>6.16.0</wicket.version>
 		<wicket-webjars.version>0.4.2</wicket-webjars.version>
@@ -105,6 +105,11 @@
 	
 	<dependencies>
 		<!--  WICKET DEPENDENCIES -->
+		<dependency>
+		      <groupId>net.ftlines.wicket-source</groupId>
+		      <artifactId>wicket-source</artifactId>
+		      <version>6.0.0.8</version>
+		 </dependency>		
 		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-core</artifactId>

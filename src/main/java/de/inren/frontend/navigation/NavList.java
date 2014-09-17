@@ -29,6 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * The "left side" menu. 
+ * It was designed for that purpose, but maybe in the future we can use it for more. Who knows?
+ * 
  * @author Ingo Renner
  *
  */
@@ -46,9 +49,7 @@ public class NavList extends Panel {
     @Override
     protected void onInitialize() {
         super.onInitialize();
-        if (!hasBeenRendered()) {
             initGui();
-        }
     }
 
     private void initGui() {
@@ -58,11 +59,10 @@ public class NavList extends Panel {
         ListView<GNode<NavigationElement>> listview = new ListView<GNode<NavigationElement>>("nav-ul", list) {
 
             @Override
-            @SuppressWarnings({ "unchecked", "rawtypes" })
             protected void populateItem(ListItem<GNode<NavigationElement>> item) {
                 
                 NavigationElement data = item.getModel().getObject().getData();
-                    item.add(new NavListItem("nav-li", data.getClazz(), 
+                    item.add(new NavListItem<Page>("nav-li", data.getClazz(), 
                             new StringResourceModel(data.getLanguageKey(), getComponent(data), null)));
                 if (item.getModel().getObject().getChildren().isEmpty()) {
                     item.add(new Label("nav-sub", "").setVisible(false));
