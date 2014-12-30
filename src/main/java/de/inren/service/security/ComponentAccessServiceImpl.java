@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package de.inren.service.security;
@@ -21,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,8 +33,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.inren.data.domain.security.ComponentAccess;
+import de.inren.data.domain.security.Right;
+import de.inren.data.domain.security.Role;
 import de.inren.data.repositories.security.ComponentAccessRepository;
 import de.inren.frontend.common.templates.SecuredPage;
+import de.inren.service.security.RightService.Rights;
+import de.inren.service.security.RoleService.Roles;
 
 /**
  * @author Ingo Renner
@@ -45,77 +47,102 @@ import de.inren.frontend.common.templates.SecuredPage;
 @Service(value = "componentAccessService")
 @Transactional(readOnly = true)
 public class ComponentAccessServiceImpl implements ComponentAccessService {
-	private final static Logger log = LoggerFactory
-			.getLogger(ComponentAccessServiceImpl.class);
 
-	@Autowired
+    private final static Logger       log      = LoggerFactory.getLogger(ComponentAccessServiceImpl.class);
+
+    @Autowired
+    RoleService                       roleService;
+
+    @Autowired
+    RightService                      rightService;
+
+    @Autowired
     private ComponentAccessRepository componentAccessRepository;
 
-	private boolean initDone = false;
+    private boolean                   initDone = false;
 
-	private BeanDefinitionRegistry beanDefinitionRegistry;
+    private BeanDefinitionRegistry    beanDefinitionRegistry;
 
-	private void initBeanDefinitionRegistry() {
-		beanDefinitionRegistry = new SimpleBeanDefinitionRegistry();
-		ClassPathBeanDefinitionScanner beanDefinitionScanner = new ClassPathBeanDefinitionScanner(
-				beanDefinitionRegistry);
+    private void initBeanDefinitionRegistry() {
+        beanDefinitionRegistry = new SimpleBeanDefinitionRegistry();
+        ClassPathBeanDefinitionScanner beanDefinitionScanner = new ClassPathBeanDefinitionScanner(beanDefinitionRegistry);
 
-		TypeFilter typeFilter = new AssignableTypeFilter(SecuredPage.class);
-		beanDefinitionScanner.addIncludeFilter(typeFilter);
-		beanDefinitionScanner.setIncludeAnnotationConfig(false);
-		beanDefinitionScanner.scan("de.inren.frontend");
-	}
+        TypeFilter typeFilter = new AssignableTypeFilter(SecuredPage.class);
+        beanDefinitionScanner.addIncludeFilter(typeFilter);
+        beanDefinitionScanner.setIncludeAnnotationConfig(false);
+        beanDefinitionScanner.scan("de.inren.frontend");
+    }
 
-	@Override
-	public void init() {
-		if (!initDone) {
-			log.info("ComponentAccessService init start.");
-			initBeanDefinitionRegistry();
+    @Override
+    public void init() {
+        if (!initDone) {
+            log.info("ComponentAccessService init start.");
+            roleService.init();
+            initBeanDefinitionRegistry();
+            List<String> components = Arrays.asList(findPages());
 
-			List<String> components = Arrays.asList(findPages());
+            log.info("Pages = " + (components == null ? "no pages found." : components));
 
-			log.info("Pages = "	+ (components == null ? "no pages found." : components));
+            if (components != null) {
+                final Role securedPage = getOrCreateSecuredPageRole();
+                for (String page : components) {
+                    try {
+                        BeanDefinition bd = beanDefinitionRegistry.getBeanDefinition(page);
+                        log.info("found page: " + page + " Definition: " + bd.toString());
+                        if (componentAccessRepository.findComponentAccessByName(page) == null) {
+                            // create entry for new component
+                            ComponentAccess componentAccess = new ComponentAccess();
+                            componentAccess.setName(page);
+                            componentAccess.getRoles().add(securedPage);
+                            componentAccessRepository.save(componentAccess);
+                        }
+                    } catch (Exception e) {
+                        log.error("failed to initialize service", e);
+                    }
+                }
+            }
+            initDone = true;
+            log.info("ComponentAccessService init done.");
+        }
 
-			if (components != null) {
-				for (String page : components) {
-					try {
-						BeanDefinition bd = beanDefinitionRegistry.getBeanDefinition(page);
-						log.info("found page: " + page + " Definition: " + bd.toString());
-						if(componentAccessRepository.findComponentAccessByName(page)==null) {
-							// create entry for new component
-							ComponentAccess componentAccess = new ComponentAccess();
-							componentAccess.setName(page);
-							componentAccessRepository.save(componentAccess);
-						}
-					} catch (Exception e) {
-						log.error("failed to initialize service", e);
-					}
-				}
-			}
-			initDone = true;
-			log.info("ComponentAccessService init done.");
-		}
+    }
 
-	}
+    private Role getOrCreateSecuredPageRole() {
+        Role role = roleService.findRoleByName(Roles.ROLE_SECURED_PAGE.name());
+        if (role == null) {
+            role = new Role(Roles.ROLE_SECURED_PAGE.name(), Roles.ROLE_SECURED_PAGE.name());
+            Right enable = rightService.findRightByName(Rights.ENABLE.name());
+            Right render = rightService.findRightByName(Rights.RENDER.name());
+            role.getRights().add(enable);
+            role.getRights().add(render);
+            role = roleService.save(role);
+        }
+        return role;
+    }
 
-	private String[] findPages() {
-		String[] beans = beanDefinitionRegistry.getBeanDefinitionNames();
-		return beans;
-	}
+    private String[] findPages() {
+        String[] beans = beanDefinitionRegistry.getBeanDefinitionNames();
+        return beans;
+    }
 
-	@Override
-	public ComponentAccess save(ComponentAccess componentAccess) {
-		return componentAccessRepository.save(componentAccess);
-	}
-	
-	@Override
-	public List<ComponentAccess> getComponentAccessList() {
-		List<ComponentAccess> res = new ArrayList<ComponentAccess>();
-		Iterable<ComponentAccess> all = componentAccessRepository.findAll();
-		for (ComponentAccess componentAccess : all) {
-			res.add(componentAccess);
-		}
-		return res;
-	}
-	
+    @Override
+    public ComponentAccess save(ComponentAccess componentAccess) {
+        return componentAccessRepository.save(componentAccess);
+    }
+
+    @Override
+    public List<ComponentAccess> getComponentAccessList() {
+        List<ComponentAccess> res = new ArrayList<ComponentAccess>();
+        Iterable<ComponentAccess> all = componentAccessRepository.findAll();
+        for (ComponentAccess componentAccess : all) {
+            res.add(componentAccess);
+        }
+
+        return res;
+    }
+
+    @Override
+    public ComponentAccess findComponentAccessByName(String name) {
+        return componentAccessRepository.findComponentAccessByName(name);
+    }
 }

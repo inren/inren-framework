@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.application;
 
@@ -20,14 +19,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.MissingResourceException;
 
-import net.ftlines.wicketsource.WicketSource;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
 import org.apache.wicket.Page;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authroles.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
+import org.apache.wicket.devutils.inspector.RenderPerformanceListener;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.apache.wicket.markup.html.WebPage;
@@ -35,6 +33,11 @@ import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.request.WebClientInfo;
+import org.apache.wicket.request.IRequestCycle;
+import org.apache.wicket.request.IRequestHandler;
+import org.apache.wicket.request.IRequestMapper;
+import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.spring.injection.annot.SpringBean;
@@ -49,7 +52,9 @@ import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.settings.BootstrapSettings;
 import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchTheme;
 import de.agilecoders.wicket.themes.markup.html.bootswatch.BootswatchThemeProvider;
+import de.inren.frontend.application.security.InRenAuthorizationStrategy;
 import de.inren.frontend.common.dns.DnsUtil;
+import de.inren.frontend.storehouse.picture.PictureResource;
 import de.inren.security.BasicAuthenticationSession;
 import de.inren.security.SignInPage;
 import de.inren.service.Initializable;
@@ -62,14 +67,20 @@ import de.inren.service.user.UserService;
  *
  */
 public class InRenApplication extends AuthenticatedWebApplication {
-    private final static Logger log = LoggerFactory.getLogger(InRenApplication.class);
+
+    private final static Logger log                  = LoggerFactory.getLogger(InRenApplication.class);
+
+    public static final String  THUMBNAIL_IMAGE_PATH = "thumb";
+    public static final String  PREVIEW_IMAGE_PATH   = "perview";
+    public static final String  LAYOUT_IMAGE_PATH    = "layout";
+    public static final String  IMAGE_PAGE_PATH      = "image";
 
     @SpringBean
-    UserService userService;
+    UserService                 userService;
 
     @SpringBean
-    ComponentAccessService componentAccessService;
-    
+    ComponentAccessService      componentAccessService;
+
     public InRenApplication() {
         super();
     }
@@ -90,6 +101,11 @@ public class InRenApplication extends AuthenticatedWebApplication {
         /* Spring injection. */
         this.getComponentInstantiationListeners().add(new SpringComponentInjector(this));
 
+        /* Performance measurement */
+        if (false) {
+            getComponentInstantiationListeners().add(new RenderPerformanceListener());
+        }
+
         configureBootstrap();
 
         initializeServices();
@@ -99,9 +115,18 @@ public class InRenApplication extends AuthenticatedWebApplication {
         initializeFailSafeLocalize();
         new AnnotatedMountScanner().scanPackage("de.inren").mount(this);
 
-        WicketSource.configure(this);
-        
-        // TODO gehört ins codeflower package. => Init für Wicket module/packages machen.
+        mountResource("/" + PictureResource.PICTURE_RESOURCE + "/${" + PictureResource.ID + "}/${" + PictureResource.SIZE + "}", PictureResource.asReference());
+
+        // Access to Images by url
+        // mount(createImageURIRequestTargetUrlCodingStrategy());
+        // mount(createLayoutURIRequestTargetUrlCodingStrategy());
+        // mount(createThumbnailURIRequestTargetUrlCodingStrategy());
+
+        // Render hints in html to navigate from firebug to eclipse
+        // WicketSource.configure(this);
+
+        // TODO gehört ins codeflower package. => Init für Wicket
+        // module/packages machen.
         final IPackageResourceGuard packageResourceGuard = getResourceSettings().getPackageResourceGuard();
         if (packageResourceGuard instanceof SecurePackageResourceGuard) {
             ((SecurePackageResourceGuard) packageResourceGuard).addPattern("+*.json");
@@ -115,7 +140,8 @@ public class InRenApplication extends AuthenticatedWebApplication {
         this.getMarkupSettings().setStripWicketTags(true);
         this.getMarkupSettings().setStripComments(true);
 
-        // This application can be reached from internet, but you must know the right port.
+        // This application can be reached from internet, but you must know the
+        // right port.
         // So I like to know who else besides me tries to connect.
 
         getRequestCycleListeners().add(new AbstractRequestCycleListener() {
@@ -132,22 +158,25 @@ public class InRenApplication extends AuthenticatedWebApplication {
             }
         });
 
+        getSecuritySettings().setAuthorizationStrategy(new InRenAuthorizationStrategy());
+
         // MetaDataRoleAuthorizationStrategy.authorize(AdminOnlyPage.class,
         // Roles.ADMIN);
         // mountPage("admin", AdminOnlyPage.class);
-        
-        
+
         // TODO das funzzt nur auf Class
-        
-//        LIST<COMPONENTACCESS> COMPONENTACCESS = COMPONENTACCESSSERVICE.GETCOMPONENTACCESSLIST();
-//        FOR (COMPONENTACCESS CA : COMPONENTACCESS) {
-//        	 COLLECTION<ROLE> ROLES = CA.GETGRANTEDROLES();
-//        	 STRINGBUFFER ROLESTRING = NEW STRINGBUFFER();
-//        	 FOR (ROLE ROLE : ROLES) {
-//        		 ROLESTRING.APPEND(ROLE);
-//			}
-//        	 METADATAROLEAUTHORIZATIONSTRATEGY.AUTHORIZE(CA.GETNAME(), ROLESTRING.TOSTRING());
-//		}
+
+        // LIST<COMPONENTACCESS> COMPONENTACCESS =
+        // COMPONENTACCESSSERVICE.GETCOMPONENTACCESSLIST();
+        // FOR (COMPONENTACCESS CA : COMPONENTACCESS) {
+        // COLLECTION<ROLE> ROLES = CA.GETGRANTEDROLES();
+        // STRINGBUFFER ROLESTRING = NEW STRINGBUFFER();
+        // FOR (ROLE ROLE : ROLES) {
+        // ROLESTRING.APPEND(ROLE);
+        // }
+        // METADATAROLEAUTHORIZATIONSTRATEGY.AUTHORIZE(CA.GETNAME(),
+        // ROLESTRING.TOSTRING());
+        // }
     }
 
     /**
@@ -203,11 +232,11 @@ public class InRenApplication extends AuthenticatedWebApplication {
                 try {
                     return super.getString(key, component, model, locale, style, defaultValue);
                 } catch (MissingResourceException e) {
-                	String variation = (component != null ? component.getVariation() : null);
-                	String cacheKey = getCacheKey(key, component, locale, style, variation);
+                    String variation = (component != null ? component.getVariation() : null);
+                    String cacheKey = getCacheKey(key, component, locale, style, variation);
                     log.info("######### Missing: cacheKey=[" + cacheKey + "] " + e.getMessage());
                     final String text = key + (locale == null ? "" : locale.getLanguage());
-					return "[" + text +"]";
+                    return "[" + text + "]";
                 }
             }
 
@@ -218,4 +247,192 @@ public class InRenApplication extends AuthenticatedWebApplication {
     public FeedbackPanel getFeedbackPanel(Page page) {
         return (FeedbackPanel) page.visitChildren(new FeedbackPanelVisitor());
     }
+
+    public String getThumbnailUrl(String id, RequestCycle rc) {
+        return createPicteResourceUrl(rc, id, THUMBNAIL_IMAGE_PATH);
+    }
+
+    public String getPreviewUrl(String id, RequestCycle rc) {
+        return createPicteResourceUrl(rc, id, PREVIEW_IMAGE_PATH);
+    }
+
+    public String getLayoutUrl(String id, RequestCycle rc) {
+        return createPicteResourceUrl(rc, id, LAYOUT_IMAGE_PATH);
+    }
+
+    private String createPicteResourceUrl(RequestCycle rc, String id, String size) {
+        return rc.getRequest().getContextPath() + "/" + PictureResource.PICTURE_RESOURCE + "/" + id + "/" + size;
+    }
+
+    private IRequestMapper createImageURIRequestTargetUrlCodingStrategy() {
+
+        IRequestMapper mapper = new IRequestMapper() {
+
+            @Override
+            public IRequestHandler mapRequest(Request request) {
+                IRequestHandler handler = new IRequestHandler() {
+
+                    @Override
+                    public void respond(IRequestCycle requestCycle) {
+                        // TODO Auto-generated method stub
+
+                    }
+
+                    @Override
+                    public void detach(IRequestCycle requestCycle) {
+                        // TODO Auto-generated method stub
+
+                    }
+                };
+                // TODO Auto-generated method stub
+                return null;
+            }
+
+            @Override
+            public int getCompatibilityScore(Request request) {
+                // TODO Auto-generated method stub
+                return 0;
+            }
+
+            @Override
+            public Url mapHandler(IRequestHandler requestHandler) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        };
+        return mapper;
+    }
+
+    // return new URIRequestTargetUrlCodingStrategy("/" + IMAGE_PAGE_PATH) {
+    // @Override
+    // public IRequestTarget decode(RequestParameters requestParameters) {
+    // // Get request URI
+    // String uri = getURI(requestParameters);
+    // Long id;
+    // try {
+    // id = Long.valueOf(uri);
+    // } catch (NumberFormatException e) {
+    // id = 0L;
+    // }
+    // final File imageFile;
+    // final String name;
+    // if (id > 0L) {
+    // Picture pic = pictureService.loadPicture(id);
+    // imageFile = pictureModificationService.getImage(pic.getDigest());
+    // name = pic.getFilename();
+    // } else {
+    // imageFile =
+    // pictureModificationService.getImage(PictureModificationService.FILE_NOT_FOUND_DIGEST);
+    // name = PictureModificationService.FILE_NOT_FOUND_NAME;
+    // }
+    // return new ImageResourceStreamRequestTarget(new FileResourceStream(new
+    // org.apache.wicket.util.file.File(imageFile)), 0) {
+    // @Override
+    // public String getFileName() {
+    // return name;
+    // }
+    // };
+    // }
+    //
+    // @Override
+    // public boolean matches(IRequestTarget requestTarget) {
+    // if (requestTarget instanceof ImageResourceStreamRequestTarget) {
+    // return ((ImageResourceStreamRequestTarget)
+    // requestTarget).getImageTypeId() == 0;
+    // }
+    // return false;
+    // }
+    // };
+    // }
+    //
+    // private URIRequestTargetUrlCodingStrategy
+    // createLayoutURIRequestTargetUrlCodingStrategy() {
+    // return new URIRequestTargetUrlCodingStrategy("/" + LAYOUT_IMAGE_PATH) {
+    // @Override
+    // public IRequestTarget decode(RequestParameters requestParameters) {
+    // // Get request URI
+    // String uri = getURI(requestParameters);
+    // Long id;
+    // try {
+    // id = Long.valueOf(uri);
+    // } catch (NumberFormatException e) {
+    // id = 0L;
+    // }
+    // final File imageFile;
+    // final String name;
+    // if (id > 0L) {
+    // Picture pic = pictureService.loadPicture(id);
+    // imageFile = pictureModificationService.getLayoutImage(pic.getDigest());
+    // name = pic.getFilename();
+    // } else {
+    // imageFile =
+    // pictureModificationService.getLayoutImage(PictureModificationService.FILE_NOT_FOUND_DIGEST);
+    // name = PictureModificationService.FILE_NOT_FOUND_NAME;
+    // }
+    // return new ImageResourceStreamRequestTarget(new FileResourceStream(new
+    // org.apache.wicket.util.file.File(imageFile)), 1) {
+    // @Override
+    // public String getFileName() {
+    // return name + ".png";
+    // }
+    // };
+    // }
+    //
+    // @Override
+    // public boolean matches(IRequestTarget requestTarget) {
+    // if (requestTarget instanceof ImageResourceStreamRequestTarget) {
+    // return ((ImageResourceStreamRequestTarget)
+    // requestTarget).getImageTypeId() == 1;
+    // }
+    // return false;
+    // }
+    // };
+    // }
+    //
+    // private URIRequestTargetUrlCodingStrategy
+    // createThumbnailURIRequestTargetUrlCodingStrategy() {
+    // return new URIRequestTargetUrlCodingStrategy("/" + THUMBNAIL_IMAGE_PATH)
+    // {
+    // @Override
+    // public IRequestTarget decode(RequestParameters requestParameters) {
+    // // Get request URI
+    // String uri = getURI(requestParameters);
+    // Long id;
+    // try {
+    // id = Long.valueOf(uri);
+    // } catch (NumberFormatException e) {
+    // id = 0L;
+    // }
+    // final File imageFile;
+    // final String name;
+    // if (id > 0L) {
+    // Picture pic = pictureService.loadPicture(id);
+    // imageFile =
+    // pictureModificationService.getThumbnailImage(pic.getDigest());
+    // name = pic.getFilename();
+    // } else {
+    // imageFile =
+    // pictureModificationService.getThumbnailImage(PictureModificationService.FILE_NOT_FOUND_DIGEST);
+    // name = PictureModificationService.FILE_NOT_FOUND_NAME;
+    // }
+    // return new ImageResourceStreamRequestTarget(new FileResourceStream(new
+    // org.apache.wicket.util.file.File(imageFile)), 2) {
+    // @Override
+    // public String getFileName() {
+    // return name + ".png";
+    // }
+    // };
+    // }
+    //
+    // @Override
+    // public boolean matches(IRequestTarget requestTarget) {
+    // if (requestTarget instanceof ImageResourceStreamRequestTarget) {
+    // return ((ImageResourceStreamRequestTarget)
+    // requestTarget).getImageTypeId() == 2;
+    // }
+    // return false;
+    // }
+    // };
+    // }
+
 }

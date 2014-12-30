@@ -26,7 +26,7 @@ import de.inren.frontend.common.templates.SecuredPage;
  * @author Ingo Renner
  *
  */
-public class AdminPage extends SecuredPage {
+public class AdminPage<T> extends SecuredPage<T> {
 
     @Override
     public Component createPanel(String wicketId) {

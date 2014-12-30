@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +67,7 @@ public class PictureModificationServiceImpl implements PictureModificationServic
     @Override
     public void init() {
         storehouseService.init();
+        initPictureModificationService();
     }
 
     public void initPictureModificationService() {
@@ -79,8 +81,20 @@ public class PictureModificationServiceImpl implements PictureModificationServic
                 md5sum = (byte[]) hex.decode(PictureModificationService.FILE_NOT_FOUND_DIGEST);
                 // prescale to thumbnail, also test for converter
                 storehouseService.doImport(is, md5sum);
-                getThumbnailImage(PictureModificationService.FILE_NOT_FOUND_DIGEST);
+                File thumbFile = getThumbnailImage(PictureModificationService.FILE_NOT_FOUND_DIGEST);
                 log.info("picture modification service \"File not found\" image imported");
+                try {
+        			log.info("Mimetype of " + thumbFile.getName() + " is " + Files.probeContentType(file.toPath()));
+        		} catch (IOException e) {
+        			log.error(e.getMessage(), e);
+        		}
+
+        } else {
+        	try {
+        		log.info("Mimetype of " + PictureModificationService.FILE_NOT_FOUND_NAME + " is " + Files.probeContentType(file.toPath()));
+        	} catch (IOException e) {
+        		log.error(e.getMessage(), e);
+        	}
         }
     }
 

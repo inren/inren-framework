@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package de.inren.service.security;
@@ -37,26 +36,35 @@ import de.inren.data.repositories.security.RightRepository;
 @Service(value = "rightService")
 @Transactional(readOnly = true)
 public class RightServiceImpl implements RightService {
-    private final static Logger log = LoggerFactory.getLogger(RightServiceImpl.class);
+    private final static Logger log      = LoggerFactory.getLogger(RightServiceImpl.class);
 
     @Autowired
-    RightRepository rightRepository;
+    RightRepository             rightRepository;
 
-    private boolean initDone = false;
+    private boolean             initDone = false;
 
     @Override
     public void init() {
         if (!initDone) {
             log.info("RightService init start.");
             List<Right> rights = (List<Right>) rightRepository.findAll();
-            if (rights.isEmpty()) {
-                for (Rights right : Rights.values()) {
-                    rightRepository.save(new Right(right.name(), "A system default."));
+            for (Rights defRight : Rights.values()) {
+                if (!contains(rights, defRight)) {
+                    rightRepository.save(new Right(defRight.name(), "A system default."));
                 }
             }
             initDone = true;
             log.info("RightService init done.");
         }
+    }
+
+    private boolean contains(List<Right> rights, Rights defRight) {
+        for (Right right : rights) {
+            if (right.getName().equalsIgnoreCase(defRight.name())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

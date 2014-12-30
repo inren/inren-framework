@@ -2,3 +2,7 @@
 /mem:testdb.log
 /mem:testdb.properties
 /mem:testdb.script
+/.settings/
+/.classpath
+/.gitignore
+/.project

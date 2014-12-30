@@ -34,7 +34,7 @@ import de.inren.security.BasicAuthenticationSession;
  * 
  * @author Ingo Renner
  */
-public abstract class ABasePanel extends Panel {
+public abstract class ABasePanel<T> extends Panel {
 
     protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -44,10 +44,16 @@ public abstract class ABasePanel extends Panel {
         super(id);
     }
 
-    public ABasePanel(String id, IModel<?> model) {
+    public ABasePanel(String id, IModel<T> model) {
         super(id, model);
     }
 
+    @SuppressWarnings("unchecked")
+	public IModel<T> getModel() {
+    	return (IModel<T>) getDefaultModel();
+    }
+    
+    
     @Override
     protected void onConfigure() {
         super.onConfigure();

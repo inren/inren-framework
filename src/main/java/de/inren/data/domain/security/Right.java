@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package de.inren.data.domain.security;
@@ -26,9 +25,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import de.inren.data.domain.core.DomainObject;
 
 /**
@@ -37,16 +33,17 @@ import de.inren.data.domain.core.DomainObject;
  * @author Ingo Renner
  * 
  */
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Entity(name = "ListOfRights")
+// @Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = "ListOfRights",
+// include = "all")
 // Right is not allowed with mysql.
 public class Right extends DomainObject {
 
     @Column(nullable = false, unique = true)
-    private String name;
+    private String           name;
 
     @Column(nullable = true)
-    private String description;
+    private String           description;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(joinColumns = { @JoinColumn(name = "right_roleid", referencedColumnName = "id") }, name = "role_right", inverseJoinColumns = { @JoinColumn(name = "role_rightid", referencedColumnName = "id") })
