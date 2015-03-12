@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.application;
 
@@ -23,6 +22,7 @@ import java.util.MissingResourceException;
 import org.apache.wicket.Component;
 import org.apache.wicket.Localizer;
 import org.apache.wicket.Page;
+import org.apache.wicket.Session;
 import org.apache.wicket.authroles.authentication.AbstractAuthenticatedWebSession;
 import org.apache.wicket.authroles.authentication.AuthenticatedWebApplication;
 import org.apache.wicket.authroles.authorization.strategies.role.metadata.MetaDataRoleAuthorizationStrategy;
@@ -38,6 +38,7 @@ import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.IRequestMapper;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.Response;
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.AbstractRequestCycleListener;
 import org.apache.wicket.request.cycle.RequestCycle;
@@ -81,6 +82,8 @@ public class InRenApplication extends AuthenticatedWebApplication {
 
     @SpringBean
     ComponentAccessService      componentAccessService;
+
+    private ApplicationStatus   applicationStatus    = new ApplicationStatus();
 
     public InRenApplication() {
         super();
@@ -209,6 +212,13 @@ public class InRenApplication extends AuthenticatedWebApplication {
     }
 
     @Override
+    public Session newSession(final Request request, final Response response) {
+        Session session = super.newSession(request, response);
+        applicationStatus.addSession(session);
+        return session;
+    }
+
+    @Override
     protected Class<? extends WebPage> getSignInPageClass() {
         return SignInPage.class;
     }
@@ -302,6 +312,14 @@ public class InRenApplication extends AuthenticatedWebApplication {
             }
         };
         return mapper;
+    }
+
+    public ApplicationStatus getApplicationStatus() {
+        return applicationStatus;
+    }
+
+    public void setApplicationStatus(ApplicationStatus applicationStatus) {
+        this.applicationStatus = applicationStatus;
     }
 
     // return new URIRequestTargetUrlCodingStrategy("/" + IMAGE_PAGE_PATH) {

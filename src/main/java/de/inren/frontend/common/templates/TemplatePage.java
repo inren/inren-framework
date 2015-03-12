@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.common.templates;
 
@@ -20,12 +19,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.wicket.Application;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.devutils.debugbar.DebugBar;
 import org.apache.wicket.markup.html.GenericWebPage;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
+import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
@@ -36,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import de.agilecoders.wicket.core.Bootstrap;
 import de.agilecoders.wicket.core.markup.html.bootstrap.behavior.BootstrapBaseBehavior;
-import de.agilecoders.wicket.core.markup.html.bootstrap.block.Code;
 import de.agilecoders.wicket.core.markup.html.bootstrap.html.ChromeFrameMetaTag;
 import de.agilecoders.wicket.core.markup.html.bootstrap.html.HtmlTag;
 import de.agilecoders.wicket.core.markup.html.bootstrap.html.MetaTag;
@@ -47,6 +47,8 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.Navbar;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.Navbar.ComponentPosition;
 import de.agilecoders.wicket.core.markup.html.bootstrap.navbar.NavbarButton;
 import de.agilecoders.wicket.core.settings.IBootstrapSettings;
+import de.inren.frontend.application.ApplicationStatus;
+import de.inren.frontend.application.InRenApplication;
 import de.inren.frontend.auth.LoginPage;
 import de.inren.frontend.auth.LogoutPage;
 import de.inren.frontend.common.language.LanguageSwitcherPanel;
@@ -122,13 +124,21 @@ public class TemplatePage<T> extends GenericWebPage<T> {
         navbar.setPosition(Navbar.Position.STATIC_TOP);
 
         // show brand name
-        navbar.setBrandName(Model.of("InRen"));
+        navbar.setBrandName(new AbstractReadOnlyModel<String>() {
+            @Override
+            public String getObject() {
+                ApplicationStatus status = ((InRenApplication) Application.get()).getApplicationStatus();
+                return "InRen (#=" + status.getSessions().size() + "/A=" + status.getActiveSessions() + "/T=" + status.getTemporarySessions() + "/I="
+                        + status.getInvalidSessions() + ")";
+            }
+        });
 
         navbar.addComponents(NavigationProvider.get().getTopNavbarComponents(getActivePermissions(), TemplatePage.this));
 
         // Theme selector on the right.
         final List<INavbarComponent> components = new ArrayList<INavbarComponent>();
-        // components.add(new ImmutableNavbarComponent(new ThemesDropDown(), Navbar.ComponentPosition.RIGHT));
+        // components.add(new ImmutableNavbarComponent(new ThemesDropDown(),
+        // Navbar.ComponentPosition.RIGHT));
         if (isSignedIn()) {
             components.add(new ImmutableNavbarComponent(new NavbarButton<LogoutPage>(LogoutPage.class, new StringResourceModel("logout.label",
                     TemplatePage.this, null)).setIconType(GlyphIconType.globe), ComponentPosition.RIGHT));

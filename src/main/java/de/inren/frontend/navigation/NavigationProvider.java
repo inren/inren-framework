@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.navigation;
 
@@ -39,6 +38,9 @@ import de.inren.frontend.application.HomePage;
 import de.inren.frontend.auth.LoginPage;
 import de.inren.frontend.blogpost.BlogPostsPage;
 import de.inren.frontend.blogpost.ManageBlogPostsPage;
+import de.inren.frontend.carlogbook.CarLogEntriesUserPage;
+import de.inren.frontend.carlogbook.ManageCarLogEntriesPage;
+import de.inren.frontend.carlogbook.ManageCarsPage;
 import de.inren.frontend.componentaccess.ManageComponentAccessPage;
 import de.inren.frontend.dbproperty.ManageDbPropertiesPage;
 import de.inren.frontend.group.ManageGroupsPage;
@@ -229,6 +231,15 @@ public class NavigationProvider {
 
                                 new GNode<NavigationElement>(new NavigationElement(ManageDbPropertiesPage.class, "DbProperty.label", Arrays
                                         .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
+
+                                new GNode<NavigationElement>(new NavigationElement(ManageCarsPage.class, "Car.label", Arrays.asList(Roles.ROLE_ADMIN.name()),
+                                        ComponentPosition.LEFT)),
+
+                                new GNode<NavigationElement>(new NavigationElement(ManageCarLogEntriesPage.class, "CarLogEntries.label", Arrays
+                                        .asList(Roles.ROLE_ADMIN.name()), ComponentPosition.LEFT)),
+
+                                new GNode<NavigationElement>(new NavigationElement(CarLogEntriesUserPage.class, "CarLogEntriesUser.label", Arrays
+                                        .asList(Roles.ROLE_USER.name()), ComponentPosition.LEFT)),
 
                                 new GNode<NavigationElement>(new NavigationElement(ManageBlogPostsPage.class, "BlogPost.label", Arrays.asList(Roles.ROLE_ADMIN
                                         .name()), ComponentPosition.LEFT)),
