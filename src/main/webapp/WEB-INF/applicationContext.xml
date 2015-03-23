@@ -28,8 +28,8 @@
 			">
 
 	<context:property-placeholder location="
-		classpath:de/inren/data/jpa/config/db.mysql.properties,
-		classpath:de/inren/data/jpa/config/jpa.mysql.properties"
+		classpath:de/inren/data/jpa/config/${spring.profiles.active}/db.mysql.properties,
+		classpath:de/inren/data/jpa/config/${spring.profiles.active}/jpa.mysql.properties"
 	/>
 
 	<context:component-scan base-package="de.inren.data.domain" />
