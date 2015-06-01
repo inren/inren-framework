@@ -59,6 +59,7 @@
 	</licenses>
 	
 	<properties>
+		<sonar.language>java</sonar.language>
 		<!-- Versions sorted by name -->
 		<bonecp.version>0.8.0.RELEASE</bonecp.version>
 		<log4j.version>1.2.16</log4j.version>
@@ -78,9 +79,10 @@
 		<tika.version>1.6</tika.version>
 		<wicket.version>6.19.0</wicket.version>
 		<wicket-webjars.version>0.4.2</wicket-webjars.version>
-		<wicket-bootstrap.version>0.9.7</wicket-bootstrap.version>
+		<wicket-bootstrap.version>0.9.9</wicket-bootstrap.version>
 		<javax.mail.version>1.4.7</javax.mail.version>
          <lowagie.itext.version>2.1.7</lowagie.itext.version>
+		<commons-csv.version>1.0</commons-csv.version>
 		
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
@@ -404,7 +406,11 @@
 			<artifactId>joda-time</artifactId>
 			<version>${joda-time.version}</version>
 		</dependency>	    
-
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-csv</artifactId>
+		    <version>${commons-csv.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.jhlabs</groupId>
 			<artifactId>filters</artifactId>
@@ -588,4 +594,18 @@
 			</snapshots>
 		</repository>
 	</repositories>
-	</project>
+ <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <version>3.0.2-SNAPSHOT</version>
+        <configuration>
+          <xmlOutput>true</xmlOutput>
+          <!-- Optional directory to put findbugs xdoc xml report -->
+          <xmlOutputDirectory>target/findbugs</xmlOutputDirectory>
+        </configuration>        
+      </plugin>
+    </plugins>
+  </reporting>	
+</project>

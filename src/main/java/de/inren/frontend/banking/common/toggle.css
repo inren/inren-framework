@@ -1,0 +1,21 @@
+.toggle-view {
+	list-style: none;
+	cursor: pointer;
+}
+
+.toggle-detail li {
+	list-style: none;
+	cursor: text;
+}
+
+.toggle-detail {
+	display: none;
+}
+
+.toggle-visible {
+	font-weight: bolder;
+}
+
+.toggle-hidden {
+	font-weight: inherit;
+}

@@ -31,7 +31,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.image.GlyphIconType;
 /**
  * @author Ingo Renner
  */
-public class DownloadActionLink extends AActionB4Link {
+public class DownloadActionLink extends AActionLink {
 
     private final String fileName;
     private final File file;

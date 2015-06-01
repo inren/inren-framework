@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.common.table;
 
@@ -20,30 +19,24 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackDefaultDataTable;
-import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.repeater.Item;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 
 import com.google.common.base.Strings;
 
-import de.inren.frontend.common.dataprovider.RepositoryDataProvider;
-
 /**
  * 
- * This is an easy way to create a table, starting with a column of actions, followed
- * by columns representing the fields of the object.
+ * This is an easy way to create a table, starting with a column of actions,
+ * followed by columns representing the fields of the object.
  * 
- * This is a standard way to create tables for the admin interface. For special tables
- * in your gui, please use default wicket elements as a start.
+ * This is a standard way to create tables for the admin interface. For special
+ * tables in your gui, please use default wicket elements as a start.
  * 
  * 
  * @author Ingo Renner
@@ -51,19 +44,19 @@ import de.inren.frontend.common.dataprovider.RepositoryDataProvider;
 public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> implements Serializable {
 
     /** List of the rows. */
-    private List<IColumn<T, String>> columns = new ArrayList<IColumn<T, String>>();
+    private List<IColumn<T, String>>         columns      = new ArrayList<IColumn<T, String>>();
 
     /** For a column with property name the description is found as name.label. */
-    private static final String LABEL = ".label";
+    private static final String              LABEL        = ".label";
 
     /** The component holding the table. Used for property resolving. */
-    private final Component component;
+    private final Component                  component;
 
     /** Dataprovider for the table */
     private ISortableDataProvider<T, String> dataProvider;
 
     /** Default number of rows to display in the table. */
-    private int numberOfRows = 10;
+    private int                              numberOfRows = 10;
 
     /**
      * How many rows do should the table have? Default is 10.
@@ -112,7 +105,14 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         if (Strings.isNullOrEmpty(id) || columns.isEmpty() || dataProvider == null) {
             throw new IllegalStateException("Can't create Table, not all elements are available. id=" + id + ", " + toString());
         }
-        return new AjaxFallbackDefaultDataTable<T, String>(id, columns, dataProvider, numberOfRows).setOutputMarkupId(true);
+        Component table = new AjaxFallbackDefaultDataTable<T, String>(id, columns, dataProvider, numberOfRows);
+        table.setOutputMarkupId(true);
+        table.add(AttributeModifier.append("class", "table-bordered"));
+        table.add(AttributeModifier.append("class", "table-hover"));
+        table.add(AttributeModifier.append("class", "table-condensed"));
+        table.add(AttributeModifier.append("class", "table-striped"));
+
+        return table;
     }
 
     /**
@@ -128,10 +128,10 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
 
     /**
      * 
-     * Add a value to the row. This value will be displayed as is.
-     * The headline for this row will be resolved as "property.label" from the StringResources
-     * The value will be resolved with a PropertyModel of the default model with name property.
-     * There is no sort option.
+     * Add a value to the row. This value will be displayed as is. The headline
+     * for this row will be resolved as "property.label" from the
+     * StringResources The value will be resolved with a PropertyModel of the
+     * default model with name property. There is no sort option.
      * 
      * @param property
      * @return this for chaining
@@ -142,11 +142,13 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
 
     /**
      *
-     * Add a value to the row. This value will be displayed as is.
-     * The headline for this row will be resolved as "property.label" from the StringResources
-     * The value will be resolved with a PropertyModel of the default model with name property.
+     * Add a value to the row. This value will be displayed as is. The headline
+     * for this row will be resolved as "property.label" from the
+     * StringResources The value will be resolved with a PropertyModel of the
+     * default model with name property.
      *
-     * If sortable is true, the resolfed field must be of a type that is comparable.
+     * If sortable is true, the resolfed field must be of a type that is
+     * comparable.
      *
      * @param property
      * @param sortable
@@ -171,14 +173,15 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
      * @param repositoryDataProvider
      * @return this for chaining
      */
-    public AjaxFallbackDefaultDataTableBuilder<T> addDataProvider(RepositoryDataProvider<T> repositoryDataProvider) {
+    public AjaxFallbackDefaultDataTableBuilder<T> addDataProvider(ISortableDataProvider<T, String> repositoryDataProvider) {
         this.dataProvider = repositoryDataProvider;
         return this;
     }
 
     /**
      * If the value of the property is a short list of Strings you can use this
-     * method. If the list is more complex, you should consider using an individual column.
+     * method. If the list is more complex, you should consider using an
+     * individual column.
      * 
      * @param listProperty
      * @param itemProperty
@@ -201,8 +204,8 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
     }
 
     /**
-     * A default implementation to display boolean values.
-     * With the option of sorting.
+     * A default implementation to display boolean values. With the option of
+     * sorting.
      * 
      * @param property
      * @param sortable
@@ -222,30 +225,30 @@ public final class AjaxFallbackDefaultDataTableBuilder<T extends Serializable> i
         }
     }
 
-    private static final class BooleanPropertyColumn<T> extends PropertyColumn<T, String> {
-        private final String property;
+    public AjaxFallbackDefaultDataTableBuilder<T> addMoneyPropertyColumn(String property) {
+        return addMoneyPropertyColumn(property, false);
+    }
 
-        private BooleanPropertyColumn(IModel<String> displayModel, String propertyExpression, String property) {
-            super(displayModel, propertyExpression);
-            this.property = property;
+    /**
+     * A default implementation to display boolean values. With the option of
+     * sorting.
+     * 
+     * @param property
+     * @param sortable
+     * 
+     * @return this for chaining
+     */
+    public AjaxFallbackDefaultDataTableBuilder<T> addMoneyPropertyColumn(String property, boolean sortable) {
+        columns.add(createMoneyPropertyColumn(property, sortable));
+        return this;
+    }
+
+    private PropertyColumn<T, String> createMoneyPropertyColumn(final String property, boolean sortable) {
+        if (sortable) {
+            return new MoneyColumn(new StringResourceModel(property + LABEL, component, null), property, property, property);
+        } else {
+            return new MoneyColumn<T>(new StringResourceModel(property + LABEL, component, null), property, property);
         }
-
-        private BooleanPropertyColumn(IModel<String> displayModel, String sortProperty, String propertyExpression, String property) {
-            super(displayModel, sortProperty, propertyExpression);
-            this.property = property;
-        }
-
-        @Override
-        public void populateItem(Item<ICellPopulator<T>> item, String componentId, IModel<T> rowModel) {
-            PropertyModel<Boolean> model = new PropertyModel<Boolean>(rowModel, property);
-            Boolean bool = model.getObject();
-            if (bool == null) {
-                bool = Boolean.FALSE;
-            }
-            item.add(bool ? new Label(componentId, "<span>+</span>").setEscapeModelStrings(false) : new Label(componentId, "<span>-</span>")
-                    .setEscapeModelStrings(false));
-        }
-
     }
 
     @Override

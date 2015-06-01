@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 package de.inren.frontend.blogpost;
@@ -22,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-import org.apache.wicket.Session;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -53,18 +51,18 @@ import de.inren.service.security.RoleService;
  * @author Ingo Renner
  *
  */
-public class EditOrCreateBlogPostPanel extends ABasePanel implements IAdminPanel {
+public class EditOrCreateBlogPostPanel extends ABasePanel<BlogPost> implements IAdminPanel {
 
-    private static Logger log = LoggerFactory.getLogger(EditOrCreateBlogPostPanel.class);
+    private static Logger                          log = LoggerFactory.getLogger(EditOrCreateBlogPostPanel.class);
     @SpringBean
-    private BlogPostService blogPostService;
+    private BlogPostService                        blogPostService;
 
     @SpringBean
-    private RoleService roleService;
+    private RoleService                            roleService;
 
     private final IWorktopManageDelegate<BlogPost> delegate;
 
-    final BlogPost blogPost;
+    final BlogPost                                 blogPost;
 
     public EditOrCreateBlogPostPanel(String componentId, IModel<BlogPost> m, IWorktopManageDelegate<BlogPost> delegate) {
         super(componentId);
@@ -93,8 +91,6 @@ public class EditOrCreateBlogPostPanel extends ABasePanel implements IAdminPanel
         form.add(new Label("content.label", lContent));
         form.add(new TextField<String>("content", String.class).setRequired(true).setLabel(lContent).setRequired(false).setLabel(lContent));
 
-        
-        
         List<Role> allRoles = new ArrayList<Role>();
         try {
             allRoles = roleService.loadAllRoles();
@@ -120,10 +116,10 @@ public class EditOrCreateBlogPostPanel extends ABasePanel implements IAdminPanel
                 try {
                     BlogPost blogPost = (BlogPost) form.getModelObject();
                     blogPost.setUid(getUser().getId());
-        			blogPost.setCreated(new Timestamp(Calendar.getInstance().getTime().getTime()));
-        			blogPost.setState(PublishState.PUBLISHED);
-        			blogPost.setAvailableForComment(true);
-					BlogPost u = blogPostService.save(blogPost);
+                    blogPost.setCreated(new Timestamp(Calendar.getInstance().getTime().getTime()));
+                    blogPost.setState(PublishState.PUBLISHED);
+                    blogPost.setAvailableForComment(true);
+                    BlogPost u = blogPostService.save(blogPost);
                     form.info(new StringResourceModel("feedback.success", EditOrCreateBlogPostPanel.this, null).getString());
                     delegate.switchToComponent(target, delegate.getManagePanel());
                 } catch (Exception e) {

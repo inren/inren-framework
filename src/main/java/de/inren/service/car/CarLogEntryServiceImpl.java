@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.service.car;
 
@@ -24,6 +23,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -142,20 +144,24 @@ public class CarLogEntryServiceImpl implements CarLogEntryService {
     public Map<String, String> generateStatistic(Car car) {
         Map<String, String> res = new HashMap<>();
         List<CarLogEntry> logs = carLogEntryRepository.findByCarIdOrderByPitStopDateAsc(car.getId());
-        int deltaSum = 0;
-        Double fuelSum = 0.0;
-        Double costSum = 0.0;
-        int totalDelta = logs.get(logs.size() - 1).getTotalKm() - logs.get(0).getTotalKm();
-        for (CarLogEntry logBook : logs) {
-            deltaSum += logBook.getDeltaKm().intValue();
-            fuelSum += logBook.getFuel();
-            costSum += logBook.getPrice();
+        float deltaSum = 0.0f;
+        float fuelSum = 0.0f;
+        float costSum = 0.0f;
+        float totalDelta = 0.0f;
+        if (CollectionUtils.isNotEmpty(logs)) {
+            totalDelta = logs.get(logs.size() - 1).getTotalKm() - logs.get(0).getTotalKm();
+            for (CarLogEntry logBook : logs) {
+                deltaSum += logBook.getDeltaKm().intValue();
+                fuelSum += logBook.getFuel();
+                costSum += logBook.getPrice();
+            }
         }
-        res.put("totalDelta", String.valueOf(totalDelta));
-        res.put("deltaSum", String.valueOf(deltaSum));
-        res.put("fuelSum", String.valueOf(fuelSum));
-        res.put("costSum", String.valueOf(costSum));
-        res.put("pro100", String.valueOf(fuelSum * 100.0 / deltaSum));
+        res.put("totalDelta", String.format("%.2f", totalDelta));
+        res.put("deltaSum", String.format("%.2f", deltaSum));
+        res.put("fuelSum", String.format("%.2f", fuelSum));
+        res.put("costSum", String.format("%.2f", costSum));
+        res.put("pro100", String.format("%.2f", fuelSum * 100.0f / deltaSum));
+
         return res;
     }
 
@@ -225,5 +231,46 @@ public class CarLogEntryServiceImpl implements CarLogEntryService {
             }
         }
         return res;
+    }
+
+    @Override
+    public List<CarLogEntry> loadLogEntriesForCarAndMonth(Long id, Date date) {
+        // TODO use Specification
+        List<CarLogEntry> result = new ArrayList<>();
+        List<CarLogEntry> all = loadLogEntriesForCar(id);
+        LocalDateTime jodaDate = LocalDateTime.fromDateFields(date);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMinimum(Calendar.DAY_OF_MONTH));
+        setTimeToBeginningOfDay(calendar);
+        final Date begining = calendar.getTime();
+
+        calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH));
+        setTimeToEndofDay(calendar);
+        final Date end = calendar.getTime();
+
+        for (CarLogEntry entry : all) {
+            if (entry.getPitStopDate().after(begining) && entry.getPitStopDate().before(end)) {
+                result.add(entry);
+            }
+        }
+        return result;
+    }
+
+    private void setTimeToBeginningOfDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+    }
+
+    private void setTimeToEndofDay(Calendar calendar) {
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
     }
 }

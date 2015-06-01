@@ -44,8 +44,7 @@ public class BlogPostFacade {
     private CommentService  commentService;
 
     public List<BlogPost> loadAllBlogPosts() {
-        List<BlogPost> blogPosts = blogPostService.loadAllBlogPosts();
-        return blogPosts;
+        return blogPostService.loadAllBlogPosts();
     };
 
     public BlogPost save(BlogPost blogPost) {

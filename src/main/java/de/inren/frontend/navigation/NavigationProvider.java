@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.navigation;
 
@@ -37,6 +36,12 @@ import de.inren.data.domain.security.Role;
 import de.inren.frontend.admin.AdminPage;
 import de.inren.frontend.application.HomePage;
 import de.inren.frontend.auth.LoginPage;
+import de.inren.frontend.banking.BankDataImportPage;
+import de.inren.frontend.banking.ManageTransactionsPage;
+import de.inren.frontend.banking.category.ManageCategoriesPage;
+import de.inren.frontend.banking.filter.ManageCategoryFiltersPage;
+import de.inren.frontend.banking.review.MonthlyReviewPage;
+import de.inren.frontend.banking.summery.TransactionSummeryPage;
 import de.inren.frontend.blogpost.BlogPostsPage;
 import de.inren.frontend.blogpost.ManageBlogPostsPage;
 import de.inren.frontend.carlogbook.CarLogEntriesUserPage;
@@ -192,6 +197,7 @@ public class NavigationProvider {
 
         // TODO read this data from an editable source like db or xml file.
         List<String> healthRoles = Arrays.asList(Roles.ROLE_USER.name(), Roles.ROLE_ADMIN.name());
+        List<String> bankRoles = Arrays.asList();
 
         // static hack to speed up development for other places
         GNode<NavigationElement> root = new GNode<NavigationElement>(new NavigationElement(HomePage.class, "Home.label", EMPTY_LIST, ComponentPosition.LEFT))
@@ -209,6 +215,28 @@ public class NavigationProvider {
                                                 ComponentPosition.LEFT)),
                                         new GNode<NavigationElement>(new NavigationElement(HealthSettingsPage.class, "Settings.label", Arrays
                                                 .asList(Roles.ROLE_USER.name()), ComponentPosition.LEFT)))))
+
+                .addChild(
+                        new GNode<NavigationElement>(new NavigationElement(ManageTransactionsPage.class, "Transactions.label", bankRoles,
+                                ComponentPosition.LEFT), Arrays.asList(
+
+                        new GNode<NavigationElement>(new NavigationElement(ManageTransactionsPage.class, "Transactions.label", bankRoles,
+                                ComponentPosition.LEFT)),
+
+                        new GNode<NavigationElement>(new NavigationElement(TransactionSummeryPage.class, "TransactionSummary.label", bankRoles,
+                                ComponentPosition.LEFT)),
+
+                        new GNode<NavigationElement>(new NavigationElement(MonthlyReviewPage.class, "MonthlyReview.label", bankRoles, ComponentPosition.LEFT)),
+
+                        new GNode<NavigationElement>(new NavigationElement(ManageCategoriesPage.class, "Categories.label", bankRoles, ComponentPosition.LEFT)),
+
+                        new GNode<NavigationElement>(new NavigationElement(ManageCategoryFiltersPage.class, "BankFilter.label", bankRoles,
+                                ComponentPosition.LEFT)),
+
+                        new GNode<NavigationElement>(new NavigationElement(BankDataImportPage.class, "BankImport.label", bankRoles, ComponentPosition.LEFT))
+
+                        )))
+
                 .addChild(
                         new GNode<NavigationElement>(new NavigationElement(AdminPage.class, "Admin.label", Arrays.asList(Roles.ROLE_ADMIN.name()),
                                 ComponentPosition.RIGHT), Arrays.asList(

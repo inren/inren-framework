@@ -24,7 +24,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.image.GlyphIconType;
  * @author Ingo Renner
  *
  */
-public abstract class CreateActionLink extends AActionB4Link {
+public abstract class CreateActionLink extends AActionLink {
 
     public CreateActionLink(boolean ajax) {
         super(ajax, GlyphIconType.plussign);

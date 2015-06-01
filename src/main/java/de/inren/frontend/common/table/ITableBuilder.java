@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.common.table;
 
@@ -61,10 +60,10 @@ public interface ITableBuilder<T extends Serializable> {
 
     /**
      * 
-     * Add a value to the row. This value will be displayed as is.
-     * The headline for this row will be resolved as "property.label" from the StringResources
-     * The value will be resolved with a PropertyModel of the default model with name property.
-     * There is no sort option.
+     * Add a value to the row. This value will be displayed as is. The headline
+     * for this row will be resolved as "property.label" from the
+     * StringResources The value will be resolved with a PropertyModel of the
+     * default model with name property. There is no sort option.
      * 
      * @param property
      * @return this for chaining
@@ -73,11 +72,13 @@ public interface ITableBuilder<T extends Serializable> {
 
     /**
      *
-     * Add a value to the row. This value will be displayed as is.
-     * The headline for this row will be resolved as "property.label" from the StringResources
-     * The value will be resolved with a PropertyModel of the default model with name property.
+     * Add a value to the row. This value will be displayed as is. The headline
+     * for this row will be resolved as "property.label" from the
+     * StringResources The value will be resolved with a PropertyModel of the
+     * default model with name property.
      *
-     * If sortable is true, the resolfed field must be of a type that is comparable.
+     * If sortable is true, the resolfed field must be of a type that is
+     * comparable.
      *
      * @param property
      * @param sortable
@@ -95,7 +96,8 @@ public interface ITableBuilder<T extends Serializable> {
 
     /**
      * If the value of the property is a short list of Strings you can use this
-     * method. If the list is more complex, you should consider using an individual column.
+     * method. If the list is more complex, you should consider using an
+     * individual column.
      * 
      * @param listProperty
      * @param itemProperty
@@ -112,8 +114,8 @@ public interface ITableBuilder<T extends Serializable> {
     public abstract ITableBuilder<T> addBooleanPropertyColumn(String property);
 
     /**
-     * A default implementation to display boolean values.
-     * With the option of sorting.
+     * A default implementation to display boolean values. With the option of
+     * sorting.
      * 
      * @param property
      * @param sortable
@@ -121,6 +123,10 @@ public interface ITableBuilder<T extends Serializable> {
      * @return this for chaining
      */
     public abstract ITableBuilder<T> addBooleanPropertyColumn(String property, boolean sortable);
+
+    public abstract ITableBuilder<T> addMoneyPropertyColumn(String property);
+
+    public abstract ITableBuilder<T> addMoneyPropertyColumn(String property, boolean sortable);
 
     public abstract String toString();
 

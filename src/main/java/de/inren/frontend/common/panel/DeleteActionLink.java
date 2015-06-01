@@ -23,7 +23,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.image.GlyphIconType;
 /**
  * @author Ingo Renner
  */
-public abstract class DeleteActionLink extends AActionB4Link {
+public abstract class DeleteActionLink extends AActionLink {
 
     public DeleteActionLink(StringResourceModel message, boolean ajax) {
         super(ajax, GlyphIconType.trash, message);

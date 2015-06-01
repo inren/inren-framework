@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 /**
  * 
@@ -48,86 +47,77 @@ import de.inren.service.log4j.LoggerAdminService;
  *
  */
 public class ManageLoggerSettingsPanel extends ABasePanel {
-	@SpringBean
-	private LoggerAdminService loggerAdminService;
+    @SpringBean
+    private LoggerAdminService   loggerAdminService;
 
-	@SpringBean
-	private LoggerBeanRepository loggerBeanRepository;
-	
-	private LoggerBean filterSettings = new LoggerBean();
+    @SpringBean
+    private LoggerBeanRepository loggerBeanRepository;
 
-	public ManageLoggerSettingsPanel(String id) {
-		super(id);
-	}
+    private LoggerBean           filterSettings = new LoggerBean();
 
-	@Override
-	protected void onInitialize() {
-		super.onInitialize();
-		add(getTable("table"));
-		add(new LoggerFilterPanel("filter", Model.<LoggerBean>of(filterSettings)));
-	}
+    public ManageLoggerSettingsPanel(String id) {
+        super(id);
+    }
 
-	private Component getTable(final String id) {
-		AjaxFallbackDefaultDataTableBuilder<LoggerBean> builder = new AjaxFallbackDefaultDataTableBuilder<LoggerBean>(
-				ManageLoggerSettingsPanel.this);
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        add(getTable("table"));
+        add(new LoggerFilterPanel("filter", Model.<LoggerBean> of(filterSettings)));
+    }
 
-		Component table = builder
-				.addDataProvider(new RepositoryDataProvider<LoggerBean>(loggerBeanRepository){
-					@Override
-				    protected Page<LoggerBean> getPage(final Pageable pageable) {
-						if(filterSettings==null) {
-							return getRepository().findAll(pageable);
-						}
-						final String name = Strings.isEmpty(filterSettings.getName()) ? "%" : "%" + filterSettings.getName() + "%"; 
-						final String level = Strings.isEmpty(filterSettings.getLevel()) ? null : "%" + filterSettings.getLevel() + "%";
-						if(level==null) {
-							return ( (LoggerBeanRepository) getRepository()).findByNameLike(name,pageable);	
-						} else {
-							return ( (LoggerBeanRepository) getRepository()).findByNameLikeAndLevelLike(name, level, pageable);
-							
-						}
-				    }
+    private Component getTable(final String id) {
+        AjaxFallbackDefaultDataTableBuilder<LoggerBean> builder = new AjaxFallbackDefaultDataTableBuilder<LoggerBean>(ManageLoggerSettingsPanel.this);
 
-				    @Override
-				    public long size() {
-				    	PageRequest page = new PageRequest(0, 100);
-				    	return getPage(page).getTotalElements();
-				    }
+        Component table = builder.addDataProvider(new RepositoryDataProvider<LoggerBean>(loggerBeanRepository) {
+            @Override
+            protected Page<LoggerBean> getPage(final Pageable pageable) {
+                if (filterSettings == null) {
+                    return getRepository().findAll(pageable);
+                }
+                final String name = Strings.isEmpty(filterSettings.getName()) ? "%" : "%" + filterSettings.getName() + "%";
+                final String level = Strings.isEmpty(filterSettings.getLevel()) ? null : "%" + filterSettings.getLevel() + "%";
+                if (level == null) {
+                    return ((LoggerBeanRepository) getRepository()).findByNameLike(name, pageable);
+                } else {
+                    return ((LoggerBeanRepository) getRepository()).findByNameLikeAndLevelLike(name, level, pageable);
 
-				})
-				.addPropertyColumn("id", true)
-				.addPropertyColumn("name", true)
-				.addPropertyColumn("level", true)
-				.add(new AbstractColumn<LoggerBean, String>(
-						new StringResourceModel("level.label", ManageLoggerSettingsPanel.this, null)){
+                }
+            }
 
-							@Override
-							public void populateItem(Item<ICellPopulator<LoggerBean>> cellItem,	String componentId,	IModel<LoggerBean> rowModel) {
-								ListChoice<String> listChoice = new ListChoice<String>(ListChoiceMarkupContainer.CHOICES_ID,
-										new PropertyModel<String>(rowModel.getObject(), "level"),
-										loggerAdminService.getLogLevels()){
-									protected void onSelectionChanged(String level) {
-										LoggerBean lb = rowModel.getObject();
-										loggerAdminService.setLevelAndSave(lb.getName(), level);
-									};
-									protected boolean wantOnSelectionChangedNotifications()	{
-										return true;
-									}
+            @Override
+            public long size() {
+                PageRequest page = new PageRequest(0, 100);
+                return getPage(page).getTotalElements();
+            }
 
-								};
-								listChoice.setNullValid(true);
-								listChoice.setMaxRows(1);
-								ListChoiceMarkupContainer markup = new ListChoiceMarkupContainer(componentId, listChoice);
-								cellItem.add(markup);
-							}
-						}
-					)
-				.setNumberOfRows(10)
-				.build(id);
-		TableBehavior tableBehavior = new TableBehavior().bordered()
-				.condensed();
-		table.add(tableBehavior);
-		return table;
-	}
+        }).addPropertyColumn("id", true).addPropertyColumn("name", true).addPropertyColumn("level", true)
+                .add(new AbstractColumn<LoggerBean, String>(new StringResourceModel("level.label", ManageLoggerSettingsPanel.this, null)) {
+
+                    @Override
+                    public void populateItem(Item<ICellPopulator<LoggerBean>> cellItem, String componentId, IModel<LoggerBean> rowModel) {
+                        ListChoice<String> listChoice = new ListChoice<String>(ListChoiceMarkupContainer.CHOICES_ID, new PropertyModel<String>(rowModel
+                                .getObject(), "level"), loggerAdminService.getLogLevels()) {
+                            protected void onSelectionChanged(String level) {
+                                LoggerBean lb = rowModel.getObject();
+                                loggerAdminService.setLevelAndSave(lb.getName(), level);
+                            };
+
+                            @Override
+                            protected boolean wantOnSelectionChangedNotifications() {
+                                return true;
+                            }
+
+                        };
+                        listChoice.setNullValid(true);
+                        listChoice.setMaxRows(1);
+                        ListChoiceMarkupContainer markup = new ListChoiceMarkupContainer(componentId, listChoice);
+                        cellItem.add(markup);
+                    }
+                }).setNumberOfRows(10).build(id);
+        TableBehavior tableBehavior = new TableBehavior().bordered().condensed();
+        table.add(tableBehavior);
+        return table;
+    }
 
 }

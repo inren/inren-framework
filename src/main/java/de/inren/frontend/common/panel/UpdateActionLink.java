@@ -21,7 +21,7 @@ import de.agilecoders.wicket.core.markup.html.bootstrap.image.GlyphIconType;
 /**
  * @author Ingo Renner
  */
-public abstract class UpdateActionLink extends AActionB4Link {
+public abstract class UpdateActionLink extends AActionLink {
 
     public UpdateActionLink(boolean ajax) {
         super(ajax, GlyphIconType.refresh);
