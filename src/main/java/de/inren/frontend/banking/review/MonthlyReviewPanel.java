@@ -1,18 +1,17 @@
 /**
  * Copyright 2014 the original author or authors.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
- * implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package de.inren.frontend.banking.review;
 
@@ -40,12 +39,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
-import de.agilecoders.wicket.core.markup.html.bootstrap.table.TableBehavior;
-import de.inren.data.domain.banking.Transaction;
 import de.inren.frontend.banking.common.TransactionSummaryListPanel;
 import de.inren.frontend.common.panel.ABasePanel;
 import de.inren.frontend.common.panel.MoneyPanel;
-import de.inren.frontend.common.table.AjaxFallbackDefaultDataTableBuilder;
 import de.inren.service.banking.BankDataService;
 import de.inren.service.banking.TransactionSummary;
 import de.inren.service.banking.TransactionSummary.TransactionSummaryType;
@@ -54,7 +50,7 @@ import de.inren.service.banking.TransactionSummary.TransactionSummaryType;
  * @author Ingo Renner
  *
  */
-public class MonthlyReviewPanel extends ABasePanel<Transaction> {
+public class MonthlyReviewPanel extends ABasePanel<Void> {
 
     @SpringBean
     private BankDataService               bankDataService;
@@ -84,6 +80,10 @@ public class MonthlyReviewPanel extends ABasePanel<Transaction> {
                 cal.set(Calendar.YEAR, yearModel.getObject());
                 cal.set(Calendar.MONTH, monthModel.getObject());
                 cal.set(Calendar.DAY_OF_MONTH, 1);
+                cal.set(Calendar.HOUR, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
                 return cal.getTime();
             }
         };
@@ -95,6 +95,11 @@ public class MonthlyReviewPanel extends ABasePanel<Transaction> {
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(startDateModel.getObject());
                 cal.add(Calendar.MONTH, 1);
+                cal.set(Calendar.HOUR, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MILLISECOND, 0);
+                cal.add(Calendar.SECOND, -1);
                 return cal.getTime();
             }
         };
@@ -245,16 +250,6 @@ public class MonthlyReviewPanel extends ABasePanel<Transaction> {
 
     private List<Integer> calculateYearChoice() {
         return Arrays.asList(new Integer[] { 2014, 2015 });
-    }
-
-    private Component getTable(final String id, ListModel<TransactionSummary> listModel) {
-        AjaxFallbackDefaultDataTableBuilder<TransactionSummary> builder = new AjaxFallbackDefaultDataTableBuilder<TransactionSummary>(MonthlyReviewPanel.this);
-
-        Component table = builder.addDataProvider(getDataProvider(listModel)).addPropertyColumn("category", true).addMoneyPropertyColumn("sum", true)
-                .setNumberOfRows(30).build(id);
-        TableBehavior tableBehavior = new TableBehavior().bordered().condensed();
-        table.add(tableBehavior);
-        return table;
     }
 
     private SortableDataProvider<TransactionSummary, String> getDataProvider(ListModel<TransactionSummary> listModel) {

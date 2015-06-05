@@ -13,17 +13,30 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package de.inren.testsupport;
+package de.inren.frontend.banking.review;
 
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.apache.wicket.model.IModel;
+import org.apache.wicket.spring.injection.annot.SpringBean;
+
+import de.inren.frontend.common.panel.ABasePanel;
+import de.inren.service.banking.BankDataService;
 
 /**
- * Default Spring context for unit tests.
- * 
  * @author Ingo Renner
  *
  */
-@ContextConfiguration(locations = { "file:src/main/webapp/WEB-INF/applicationTestContext.xml" })
-public class InRenJUnit4SpringContextTests extends AbstractJUnit4SpringContextTests {
+public class YearlyReviewPanel extends ABasePanel<Integer> {
+
+    @SpringBean
+    private BankDataService bankDataService;
+
+    public YearlyReviewPanel(String id, IModel<Integer> yearModel) {
+        super(id, yearModel);
+    }
+
+    @Override
+    protected void onInitialize() {
+        super.onInitialize();
+        bankDataService.calculateyearlyReview((Integer) getDefaultModel().getObject());
+    }
 }

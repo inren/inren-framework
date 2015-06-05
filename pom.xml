@@ -83,7 +83,7 @@
 		<javax.mail.version>1.4.7</javax.mail.version>
          <lowagie.itext.version>2.1.7</lowagie.itext.version>
 		<commons-csv.version>1.0</commons-csv.version>
-		
+		<wicket-chartjs-version>6.19.2</wicket-chartjs-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>		
 		<!-- allowed values: R7, 1.0, 1.5, 2.0 or none -->
 		<wtp.version>none</wtp.version>
@@ -202,6 +202,11 @@
 			<artifactId>wicketstuff-tinymce</artifactId>
 			<version>${wicket.version}</version>
 		</dependency>
+		<dependency>
+		<groupId>com.pingunaut</groupId>
+			<artifactId>wicket-chartjs</artifactId>
+			<version>${wicket-chartjs-version}</version>
+			</dependency>
 		<!-- 			
 		<dependency>
 			<groupId>org.wicketstuff</groupId>
