@@ -21,8 +21,6 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Cache;
@@ -39,35 +37,21 @@ import de.inren.data.domain.core.DomainObject;
 public class Category extends DomainObject {
 
     @Column(nullable = false, unique = true)
-    private String name;
-
-    public boolean isOnlyTop() {
-        return onlyTop;
-    }
-
-    public void setOnlyTop(boolean onlyTop) {
-        this.onlyTop = onlyTop;
-    }
+    private String               name;
 
     // income or expense (default)
     private boolean              income;
 
-    // Flag, that this category is allways a top category, can't be used as
-    // child category (default false)
-    private boolean              onlyTop;
+    // Can be used to find start and end date for a (money) month period (time
+    // from
+    // one income to another).
+    private boolean              marksMonth;
 
     @Column(nullable = true)
     private String               description;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER)
     private List<CategoryFilter> filter;
-
-    @OneToMany(mappedBy = "parentCategory", fetch = FetchType.EAGER)
-    private List<Category>       subCategories;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ParentCategory_id")
-    private Category             parentCategory;
 
     public String getName() {
         return name;
@@ -101,26 +85,10 @@ public class Category extends DomainObject {
         this.filter = filter;
     }
 
-    public List<Category> getSubCategories() {
-        return subCategories;
-    }
-
-    public void setSubCategories(List<Category> subCategories) {
-        this.subCategories = subCategories;
-    }
-
-    public Category getParentCategory() {
-        return parentCategory;
-    }
-
-    public void setParentCategory(Category parentCategory) {
-        this.parentCategory = parentCategory;
-    }
-
     @Override
     public String toString() {
-        return "Category [name=" + name + ", income=" + income + ", onlyTop=" + onlyTop + ", description=" + description + ", filter=" + filter
-                + ", subCategories=" + subCategories + ", parentCategory=" + parentCategory + "]";
+        return "Category [name=" + name + ", income=" + income + ", description=" + description + ", filter=" + filter + ", getId()=" + getId() + ", isNew()="
+                + isNew() + ", toString()=" + super.toString() + ", hashCode()=" + hashCode() + ", getClass()=" + getClass() + "]";
     }
 
 }

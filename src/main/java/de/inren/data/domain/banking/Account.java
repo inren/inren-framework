@@ -33,6 +33,15 @@ public class Account extends DomainObject {
 
     private String number;
     private String owner;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public String getNumber() {
         return number;
@@ -52,7 +61,19 @@ public class Account extends DomainObject {
 
     @Override
     public String toString() {
-        return "Account [number=" + number + ", owner=" + owner + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Account [number=");
+        builder.append(number);
+        builder.append(", owner=");
+        builder.append(owner);
+        builder.append(", name=");
+        builder.append(name);
+        builder.append("]");
+        return builder.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }

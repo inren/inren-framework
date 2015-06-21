@@ -28,11 +28,9 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.PackageResourceReference;
-import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import de.inren.data.domain.banking.Transaction;
 import de.inren.frontend.common.panel.ABasePanel;
-import de.inren.service.banking.BankDataService;
 import de.inren.service.banking.TransactionSummary;
 
 /**
@@ -43,9 +41,6 @@ import de.inren.service.banking.TransactionSummary;
  *
  */
 public class TransactionSummaryListPanel extends ABasePanel<List<TransactionSummary>> {
-
-    @SpringBean
-    private BankDataService bankDataService;
 
     public TransactionSummaryListPanel(String id, IModel<List<TransactionSummary>> model) {
         super(id, model);

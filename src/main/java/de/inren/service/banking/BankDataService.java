@@ -61,8 +61,10 @@ public interface BankDataService extends Initializable {
 
     List<PrincipalInfo> getPrincipalInfo();
 
-    List<Category> loadAvailableSubCategories(Category category);
+    BalanceSummary loadBalanceSummary(Date from, Date until);
 
-    void calculateyearlyReview(Integer year);
+    List<Category> findAllCategoriesForMonthReport();
+
+    List<Transaction> findTransactionsByCategory(Category category);
 
 }

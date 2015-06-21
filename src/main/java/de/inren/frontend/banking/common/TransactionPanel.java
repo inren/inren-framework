@@ -56,6 +56,12 @@ public class TransactionPanel extends ABasePanel<Transaction> {
                 StringBuilder sb = new StringBuilder();
                 Transaction transaction = getModel().getObject();
                 sb
+                        .append("ID: ")
+                        .append(transaction.getId())
+                        .append("\n")
+                        .append("Hash: ")
+                        .append(transaction.getHashCode())
+                        .append("\n")
                         .append("AccountNumber: ")
                         .append(transaction.getAccountNumber())
                         .append("\n")

@@ -41,6 +41,7 @@ import de.inren.frontend.banking.BankDataImportPage;
 import de.inren.frontend.banking.ManageTransactionsPage;
 import de.inren.frontend.banking.category.ManageCategoriesPage;
 import de.inren.frontend.banking.filter.ManageCategoryFiltersPage;
+import de.inren.frontend.banking.review.CategoryReviewPage;
 import de.inren.frontend.banking.review.MonthlyReviewPage;
 import de.inren.frontend.banking.summery.TransactionSummeryPage;
 import de.inren.frontend.blogpost.BlogPostsPage;
@@ -221,22 +222,27 @@ public class NavigationProvider {
                         new GNode<NavigationElement>(new NavigationElement(ManageTransactionsPage.class, "Transactions.label", bankRoles,
                                 ComponentPosition.LEFT), Arrays.asList(
 
-                        new GNode<NavigationElement>(new NavigationElement(ManageTransactionsPage.class, "Transactions.label", bankRoles,
-                                ComponentPosition.LEFT)),
+                                new GNode<NavigationElement>(new NavigationElement(ManageTransactionsPage.class, "Transactions.label", bankRoles,
+                                        ComponentPosition.LEFT)),
 
-                        new GNode<NavigationElement>(new NavigationElement(TransactionSummeryPage.class, "TransactionSummary.label", bankRoles,
-                                ComponentPosition.LEFT)),
+                                new GNode<NavigationElement>(new NavigationElement(TransactionSummeryPage.class, "TransactionSummary.label", bankRoles,
+                                        ComponentPosition.LEFT)),
 
-                        new GNode<NavigationElement>(new NavigationElement(MonthlyReviewPage.class, "MonthlyReview.label", bankRoles, ComponentPosition.LEFT)),
+                                new GNode<NavigationElement>(new NavigationElement(MonthlyReviewPage.class, "MonthlyReview.label", bankRoles,
+                                        ComponentPosition.LEFT)),
 
-                        new GNode<NavigationElement>(new NavigationElement(ManageCategoriesPage.class, "Categories.label", bankRoles, ComponentPosition.LEFT)),
+                                new GNode<NavigationElement>(new NavigationElement(CategoryReviewPage.class, "CategoryReview.label", bankRoles,
+                                        ComponentPosition.LEFT)),
+                                new GNode<NavigationElement>(new NavigationElement(ManageCategoriesPage.class, "Categories.label", bankRoles,
+                                        ComponentPosition.LEFT)),
 
-                        new GNode<NavigationElement>(new NavigationElement(ManageCategoryFiltersPage.class, "BankFilter.label", bankRoles,
-                                ComponentPosition.LEFT)),
+                                new GNode<NavigationElement>(new NavigationElement(ManageCategoryFiltersPage.class, "BankFilter.label", bankRoles,
+                                        ComponentPosition.LEFT)),
 
-                        new GNode<NavigationElement>(new NavigationElement(BankDataImportPage.class, "BankImport.label", bankRoles, ComponentPosition.LEFT))
+                                new GNode<NavigationElement>(new NavigationElement(BankDataImportPage.class, "BankImport.label", bankRoles,
+                                        ComponentPosition.LEFT))
 
-                        )))
+                                )))
 
                 .addChild(
                         new GNode<NavigationElement>(new NavigationElement(AdminPage.class, "Admin.label", Arrays.asList(Roles.ROLE_ADMIN.name()),

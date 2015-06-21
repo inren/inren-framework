@@ -36,7 +36,7 @@ import de.inren.data.domain.core.DomainObject;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Transaction extends DomainObject {
 
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private String     hashCode;
     @Column(nullable = true)
     private String     category;
@@ -188,10 +188,13 @@ public class Transaction extends DomainObject {
 
     @Override
     public String toString() {
-        return "Transaction [hashCode=" + hashCode + ", category=" + category + ", categoryFixed=" + categoryFixed + ", accountNumber=" + accountNumber
-                + ", accountingDate=" + accountingDate + ", valutaDate=" + valutaDate + ", principal=" + principal + ", accountingText=" + accountingText
-                + ", purpose=" + purpose + ", amount=" + amount + ", transactionCurrency=" + transactionCurrency + ", balance=" + balance
-                + ", balanceCurrency=" + balanceCurrency + "]";
+        StringBuilder builder = new StringBuilder();
+        builder.append("Transaction [hashCode=").append(hashCode).append(", category=").append(category).append(", categoryFixed=").append(categoryFixed)
+                .append(", accountNumber=").append(accountNumber).append(", accountingDate=").append(accountingDate).append(", valutaDate=").append(valutaDate)
+                .append(", principal=").append(principal).append(", accountingText=").append(accountingText).append(", purpose=").append(purpose)
+                .append(", amount=").append(amount).append(", transactionCurrency=").append(transactionCurrency).append(", balance=").append(balance)
+                .append(", balanceCurrency=").append(balanceCurrency).append(", toString()=").append(super.toString()).append("]");
+        return builder.toString();
     }
 
     /**

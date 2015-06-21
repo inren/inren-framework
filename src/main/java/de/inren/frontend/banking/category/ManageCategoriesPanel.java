@@ -159,7 +159,8 @@ public class ManageCategoriesPanel extends ManagePanel implements IAdminPanel {
 
                         cellItem.add(bg);
                     }
-                }).addPropertyColumn("id", true).addBooleanPropertyColumn("income", true).addPropertyColumn("name", true).setNumberOfRows(10).build(id);
+                }).addPropertyColumn("id", true).addBooleanPropertyColumn("income", true).addBooleanPropertyColumn("marksMonth", true)
+                .addPropertyColumn("name", true).setNumberOfRows(10).build(id);
         TableBehavior tableBehavior = new TableBehavior().bordered().condensed();
         table.add(tableBehavior);
         return table;

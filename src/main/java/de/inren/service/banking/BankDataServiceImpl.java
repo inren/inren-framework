@@ -41,6 +41,8 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -60,7 +62,9 @@ import de.inren.service.banking.TransactionSummary.TransactionSummaryType;
 @Service(value = "bankDataService")
 @Transactional(readOnly = true)
 public class BankDataServiceImpl implements BankDataService {
-    private final static Logger      log      = LoggerFactory.getLogger(BankDataServiceImpl.class);
+    private static final Sort        SORT_VALUTA_ASC = new Sort(Direction.ASC, "valutaDate");
+
+    private final static Logger      log             = LoggerFactory.getLogger(BankDataServiceImpl.class);
 
     @Resource
     private AccountRepository        accountRepository;
@@ -74,7 +78,7 @@ public class BankDataServiceImpl implements BankDataService {
     @Resource
     private CategoryFilterRepository categoryFilterRepository;
 
-    private boolean                  initDone = false;
+    private boolean                  initDone        = false;
 
     @Override
     public void init() {
@@ -94,16 +98,13 @@ public class BankDataServiceImpl implements BankDataService {
                 case 1: // Umsatzanzeige
                     break;
                 case 2: // Kunde
-                    account.setOwner(record.get(1));
+                    account.setOwner(record.get(1).trim());
                     break;
                 case 3: // Konto
-                    String line = record.get(1);
-                    if (line.startsWith("Girokonto: ")) {
-                        account.setNumber(line.substring("Girokonto: ".length()));
-                        account = validateAccount(account);
-                    } else {
-                        throw new IllegalStateException("Can't interpret line:" + line);
-                    }
+                    String[] vals = record.get(1).split(":");
+                    account.setName(vals[0].trim());
+                    account.setNumber(vals[1].trim());
+                    account = validateAccount(account);
                     break;
                 case 4: //
                     break;
@@ -117,16 +118,16 @@ public class BankDataServiceImpl implements BankDataService {
                     break;
                 default: // Eintrag
                     Transaction transaction = new Transaction();
-                    transaction.setAccountNumber(account.getNumber());
+                    transaction.setAccountNumber(account.getNumber().trim());
                     transaction.setAccountingDate(getDate(record.get(0)));
                     transaction.setValutaDate(getDate(record.get(1)));
-                    transaction.setPrincipal(record.get(2));
-                    transaction.setAccountingText(record.get(3));
-                    transaction.setPurpose(record.get(4));
+                    transaction.setPrincipal(record.get(2).trim());
+                    transaction.setAccountingText(record.get(3).trim());
+                    transaction.setPurpose(record.get(4).trim());
                     transaction.setAmount(getBigDecimal(record.get(5)));
-                    transaction.setTransactionCurrency(record.get(6));
+                    transaction.setTransactionCurrency(record.get(6).trim());
                     transaction.setBalance(getBigDecimal(record.get(7)));
-                    transaction.setBalanceCurrency(record.get(8));
+                    transaction.setBalanceCurrency(record.get(8).trim());
                     transaction.setHashCode(transaction.createHashCode());
                     Transaction oldTransaction = transactionRepository.findByHashCode(transaction.getHashCode());
                     // only save new transactions
@@ -163,6 +164,11 @@ public class BankDataServiceImpl implements BankDataService {
         Account entity = accountRepository.findByNumber(account.getNumber());
         if (entity == null) {
             entity = accountRepository.save(account);
+        } else {
+            if (!account.getName().equals(entity.getName())) {
+                entity.setName(account.getName());
+                entity = accountRepository.save(entity);
+            }
         }
         return entity;
     }
@@ -209,7 +215,9 @@ public class BankDataServiceImpl implements BankDataService {
 
     @Override
     public void removeCategoryFromTransactions(CategoryFilter categoryFilter) {
-        List<Transaction> entities = transactionRepository.findAll(new TransactionCategoryFilterSpecification(categoryFilter));
+
+        List<Transaction> entities = transactionRepository.findAll(new TransactionCategoryFilterSpecification(categoryFilter),
+                SORT_VALUTA_ASC);
         Iterator<Transaction> iterator = entities.iterator();
         while (iterator.hasNext()) {
             Transaction transaction = (Transaction) iterator.next();
@@ -225,7 +233,7 @@ public class BankDataServiceImpl implements BankDataService {
 
     @Override
     public void applyCategoryToTransactions(CategoryFilter categoryFilter) {
-        List<Transaction> entities = transactionRepository.findAll(new TransactionCategoryFilterSpecification(categoryFilter));
+        List<Transaction> entities = transactionRepository.findAll(new TransactionCategoryFilterSpecification(categoryFilter), SORT_VALUTA_ASC);
         Iterator<Transaction> iterator = entities.iterator();
         while (iterator.hasNext()) {
             Transaction transaction = (Transaction) iterator.next();
@@ -307,14 +315,20 @@ public class BankDataServiceImpl implements BankDataService {
 
     private Collection<TransactionSummary> calculateTransactionSummary(boolean income, Date from, @Nullable Date until) {
         Map<String, TransactionSummary> summery = new HashMap<String, TransactionSummary>();
-        List<Category> categories = categoryRepository.findByOnlyTopAndIncome(true, income);
+        List<Category> categories = categoryRepository.findByIncome(income);
         Set<String> categoryNames = new HashSet<String>();
+        if (!income) {
+            categoryNames.add("no category");
+        }
         for (Category category : categories) {
-            fillCategoryNames(categoryNames, category);
+            categoryNames.add(category.getName());
         }
 
-        List<Transaction> entities = transactionRepository.findAll(new TransactionDateSpecification(from, until));
+        List<Transaction> entities = transactionRepository.findAll(new TransactionDateSpecification(from, until), SORT_VALUTA_ASC);
         for (Transaction transaction : entities) {
+            if (!income && StringUtils.isEmpty(transaction.getCategory())) {
+                transaction.setCategory("no category");
+            }
             if (categoryNames.contains(transaction.getCategory())) {
                 if (summery.containsKey(transaction.getCategory())) {
                     TransactionSummary sum = summery.get(transaction.getCategory());
@@ -327,16 +341,6 @@ public class BankDataServiceImpl implements BankDataService {
             }
         }
         return summery.values();
-    }
-
-    private void fillCategoryNames(Set<String> categoryNames, Category category) {
-        categoryNames.add(category.getName());
-        if (category.getSubCategories() != null) {
-            for (Category subCategory : category.getSubCategories()) {
-                fillCategoryNames(categoryNames, subCategory);
-            }
-        }
-
     }
 
     @Override
@@ -357,28 +361,37 @@ public class BankDataServiceImpl implements BankDataService {
     }
 
     @Override
-    public List<Category> loadAvailableSubCategories(Category category) {
-        List<Category> categories = categoryRepository.findByParentCategoryAndOnlyTop(null, false);
-        if (category != null) {
-            Iterator<Category> categoriesIterator = categories.iterator();
-
-            while (categoriesIterator.hasNext()) {
-                Category aCategory = (Category) categoriesIterator.next();
-                if (aCategory.equals(category)) {
-                    categoriesIterator.remove();
-                    break;
-                }
+    public BalanceSummary loadBalanceSummary(Date from, Date until) {
+        BalanceSummary balanceSummary = new BalanceSummary();
+        balanceSummary.setFrom(from);
+        balanceSummary.setUntil(until);
+        Iterable<Account> accounts = accountRepository.findAll();
+        for (Account account : accounts) {
+            balanceSummary.getAccounts().add(account);
+            List<Transaction> transactions = transactionRepository.findAll(new TransactionDateSpecification(from, until, account.getNumber()), SORT_VALUTA_ASC);
+            if (!transactions.isEmpty()) {
+                balanceSummary.getFromBalance().put(account.getNumber(), transactions.get(0).getBalance());
+                balanceSummary.getUntilBalance().put(account.getNumber(), transactions.get(transactions.size() - 1).getBalance());
+            } else {
+                balanceSummary.getFromBalance().put(account.getNumber(), BigDecimal.ZERO);
+                balanceSummary.getUntilBalance().put(account.getNumber(), BigDecimal.ZERO);
             }
-
         }
-        return categories;
+        return balanceSummary;
     }
 
     @Override
-    public void calculateyearlyReview(Integer year) {
-        for (int month = 0; month < 12; month++) {
-
-        }
-
+    public List<Category> findAllCategoriesForMonthReport() {
+        return categoryRepository.findByMarksMonth(true);
     }
+
+    @Override
+    public List<Transaction> findTransactionsByCategory(Category category) {
+        return transactionRepository.findAllByCategory(category.getName(), SortByValutaDateAsc());
+    }
+
+    private Sort SortByValutaDateAsc() {
+        return new Sort(Sort.Direction.ASC, "valutaDate");
+    }
+
 }
