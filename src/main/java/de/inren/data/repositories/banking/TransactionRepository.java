@@ -18,6 +18,7 @@ package de.inren.data.repositories.banking;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
@@ -32,5 +33,7 @@ public interface TransactionRepository extends PagingAndSortingRepository<Transa
     Transaction findByHashCode(String hashCode);
 
     List<Transaction> findAllByCategory(String category);
+
+    List<Transaction> findAllByCategory(String category, Sort sort);
 
 }

@@ -32,15 +32,11 @@
 
 package de.inren.frontend.banking.category;
 
-import java.util.List;
-
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.markup.html.form.palette.Palette;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
-import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
@@ -48,13 +44,11 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.inren.data.domain.banking.Category;
-import de.inren.data.repositories.banking.TransactionRepository;
 import de.inren.frontend.banking.TransactionWorktopManageDelegate;
 import de.inren.frontend.banking.common.PrincipalTablePanel;
 import de.inren.frontend.common.manage.IWorktopManageDelegate;
@@ -71,9 +65,6 @@ public class EditOrCreateCategoryPanel extends ABasePanel<Category> implements I
     private static Logger                          log = LoggerFactory.getLogger(EditOrCreateCategoryPanel.class);
     @SpringBean
     private BankDataService                        bankDataService;
-
-    @SpringBean
-    private TransactionRepository                  transactionRepository;
 
     private final IWorktopManageDelegate<Category> categoryWorktopManageDelegate;
 
@@ -119,17 +110,9 @@ public class EditOrCreateCategoryPanel extends ABasePanel<Category> implements I
         form.add(new Label("income.label", lIncome));
         form.add(new CheckBox("income").setLabel(lIncome));
 
-        StringResourceModel lOnlyTop = new StringResourceModel("onlyTop.label", EditOrCreateCategoryPanel.this, null);
-        form.add(new Label("onlyTop.label", lOnlyTop));
-        CheckBox onlyTopCb = new CheckBox("onlyTop");
-        // only edit if not already used as sub category.
-        onlyTopCb.setEnabled(category.getParentCategory() == null);
-        form.add(onlyTopCb.setLabel(lOnlyTop));
-
-        StringResourceModel lSubCategories = new StringResourceModel("subCategories.label", EditOrCreateCategoryPanel.this, null);
-        form.add(new Label("subCategories.label", lSubCategories));
-        Palette<Category> subCategories = new Palette<Category>("subCategories", loadChoicesModel(), new ChoiceRenderer<Category>("name", "id"), 25, false);
-        form.add(subCategories);
+        StringResourceModel lMarksMonth = new StringResourceModel("marksMonth.label", EditOrCreateCategoryPanel.this, null);
+        form.add(new Label("marksMonth.label", lMarksMonth));
+        form.add(new CheckBox("marksMonth").setLabel(lMarksMonth));
 
         form.add(new AjaxLink<Void>("cancel") {
             @Override
@@ -165,11 +148,6 @@ public class EditOrCreateCategoryPanel extends ABasePanel<Category> implements I
         add(form);
 
         add(new PrincipalTablePanel("pribcipalInfo"));
-    }
-
-    private IModel<List<Category>> loadChoicesModel() {
-        List<Category> availableSubCategories = bankDataService.loadAvailableSubCategories(category);
-        return new ListModel(availableSubCategories);
     }
 
     private void switchToManagePanel(AjaxRequestTarget target) {

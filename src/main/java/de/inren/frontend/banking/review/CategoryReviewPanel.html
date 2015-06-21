@@ -21,6 +21,15 @@
 	<form wicket:id="form" class="form-horizontal">
 		<div class="row">
 			<div class="control-group col-xs-4">
+				<label class="control-label" for="category" wicket:id="category.label">[category]</label>
+				<div class="controls">
+				   	<select wicket:id="category" name="category">
+				   		<option>[1 category]</option>
+				   		<option>[2 category]</option>
+				   	</select>			
+				</div>
+			</div>
+			<div class="control-group col-xs-4">
 				<label class="control-label" for="year" wicket:id="year.label">[year]</label>
 				<div class="controls">
 				   	<select wicket:id="year" name="year">
@@ -33,14 +42,26 @@
 				<label class="control-label" for="month" wicket:id="month.label">[month]</label>
 				<div class="controls">
 				   	<select wicket:id="month" name="month">
-				   		<option>[1]</option>
-				   		<option>[2]</option>
+				   		<option>[2014]</option>
+				   		<option>[2015]</option>
 				   	</select>			
 				</div>
 			</div>
 			<div class="control-group col-xs-4">
 				<div class="controls">
 					<button class="btn" wicket:id="calculate"><wicket:message key="calculate.label">[calculate]</wicket:message></button>
+				</div>
+			</div>
+			<div class="control-group col-xs-4">
+				<label class="control-label" for="startDate" wicket:id="startDate.label">[startDate label]</label>
+				<div class="controls">
+				   	<div wicket:id="startDate" name="startDate">[startDate]</div>
+				</div>
+			</div>
+			<div class="control-group col-xs-4">
+				<label class="control-label" for="endDate" wicket:id="endDate.label">[endDate label]</label>
+				<div class="controls">
+				   	<div wicket:id="endDate" name="endDate">[endDate]</div>
 				</div>
 			</div>
 		</div>

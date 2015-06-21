@@ -28,8 +28,8 @@ import de.inren.data.domain.banking.Category;
  */
 public interface CategoryRepository extends PagingAndSortingRepository<Category, Long> {
 
-    List<Category> findByOnlyTopAndIncome(boolean onlyTop, boolean income);
+    List<Category> findByIncome(boolean income);
 
-    List<Category> findByParentCategoryAndOnlyTop(Category category, boolean onlyTop);
+    List<Category> findByMarksMonth(boolean marksMonth);
 
 }

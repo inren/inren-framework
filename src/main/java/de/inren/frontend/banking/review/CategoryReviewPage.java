@@ -16,28 +16,22 @@
  */
 package de.inren.frontend.banking.review;
 
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.spring.injection.annot.SpringBean;
+import org.apache.wicket.Component;
+import org.wicketstuff.annotation.mount.MountPath;
 
-import de.inren.frontend.common.panel.ABasePanel;
-import de.inren.service.banking.BankDataService;
+import de.inren.data.domain.banking.Transaction;
+import de.inren.frontend.common.templates.SecuredPage;
 
 /**
  * @author Ingo Renner
  *
  */
-public class YearlyReviewPanel extends ABasePanel<Integer> {
-
-    @SpringBean
-    private BankDataService bankDataService;
-
-    public YearlyReviewPanel(String id, IModel<Integer> yearModel) {
-        super(id, yearModel);
-    }
+@MountPath(value = "/categoryReview")
+public class CategoryReviewPage extends SecuredPage<Transaction> {
 
     @Override
-    protected void onInitialize() {
-        super.onInitialize();
-        bankDataService.calculateyearlyReview((Integer) getDefaultModel().getObject());
+    public Component createPanel(String wicketId) {
+        return new CategoryReviewPanel(wicketId);
     }
+
 }

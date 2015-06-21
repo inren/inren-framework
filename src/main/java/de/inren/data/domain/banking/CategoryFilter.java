@@ -38,7 +38,7 @@ public class CategoryFilter extends DomainObject {
     @JoinColumn(name = "Category_id")
     private Category category;
 
-    // Filter for taging
+    // Filter for tagging
     private String   accountingTextFilter;
     private String   principalFilter;
     private String   purposeFilter;
