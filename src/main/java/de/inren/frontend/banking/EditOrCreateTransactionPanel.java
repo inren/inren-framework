@@ -16,26 +16,33 @@
  */
 package de.inren.frontend.banking;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
+import org.apache.wicket.extensions.markup.html.form.palette.Palette;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.CheckBox;
+import org.apache.wicket.markup.html.form.ChoiceRenderer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.IChoiceRenderer;
 import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.spring.injection.annot.SpringBean;
 
 import de.inren.data.domain.banking.Transaction;
+import de.inren.data.domain.security.Right;
 import de.inren.frontend.common.manage.IWorktopManageDelegate;
 import de.inren.frontend.common.panel.ABasePanel;
 import de.inren.frontend.common.panel.IAdminPanel;
+import de.inren.frontend.role.EditOrCreateRolePanel;
 import de.inren.service.banking.BankDataService;
 
 /**
@@ -69,17 +76,42 @@ public class EditOrCreateTransactionPanel extends ABasePanel<Transaction> implem
         form.add(new Label("category.label", lCategory));
         form.add(new DropDownChoice<String>("category", getCategories()));
 
+        
+        
+        
+        List<String> allTags = new ArrayList<String>();
+        try {
+            allTags = bankDataService.loadAllTagNames();
+        } catch (RuntimeException e1) {
+            e1.printStackTrace();
+        }
+        StringResourceModel lTagList = new StringResourceModel("tagList.label", EditOrCreateTransactionPanel.this, null);
+        form.add(new Label("tagList.label", lTagList));
+
+        form.add(new Palette<String>("tagList", new ListModel<String>(allTags), new IChoiceRenderer<String>() {
+
+            @Override
+            public Object getDisplayValue(String object) {
+                return object;
+            }
+
+            @Override
+            public String getIdValue(String object, int index) {
+                return object;
+            }
+        },5, false));
+        
         StringResourceModel lCategoryFixed = new StringResourceModel("categoryFixed.label", EditOrCreateTransactionPanel.this, null);
         form.add(new Label("categoryFixed.label", lCategoryFixed));
         form.add(new CheckBox("categoryFixed").setLabel(lCategoryFixed));
 
         StringResourceModel lPrincipal = new StringResourceModel("principal.label", EditOrCreateTransactionPanel.this, null);
         form.add(new Label("principal.label", lPrincipal));
-        form.add(new TextField<String>("principal", String.class).setRequired(false).setLabel(lPrincipal).setLabel(lPrincipal).setEnabled(false));
+        form.add(new TextField<String>("principal", String.class).setRequired(false).setLabel(lPrincipal).setEnabled(false));
 
         StringResourceModel lAccountingtext = new StringResourceModel("accountingText.label", EditOrCreateTransactionPanel.this, null);
         form.add(new Label("accountingText.label", lAccountingtext));
-        form.add(new TextField<String>("accountingText", String.class).setRequired(false).setLabel(lAccountingtext).setLabel(lAccountingtext).setEnabled(false));
+        form.add(new TextField<String>("accountingText", String.class).setRequired(false).setLabel(lAccountingtext).setEnabled(false));
 
         StringResourceModel lPurpose = new StringResourceModel("purpose.label", EditOrCreateTransactionPanel.this, null);
         form.add(new Label("purpose.label", lPurpose));

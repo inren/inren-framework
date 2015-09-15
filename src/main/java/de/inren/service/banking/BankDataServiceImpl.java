@@ -53,10 +53,12 @@ import de.inren.data.domain.banking.CategoryFilter;
 import de.inren.data.domain.banking.Transaction;
 import de.inren.data.domain.banking.TransactionCategoryFilterSpecification;
 import de.inren.data.domain.banking.TransactionDateSpecification;
+import de.inren.data.domain.tagging.Tag;
 import de.inren.data.repositories.banking.AccountRepository;
 import de.inren.data.repositories.banking.CategoryFilterRepository;
 import de.inren.data.repositories.banking.CategoryRepository;
 import de.inren.data.repositories.banking.TransactionRepository;
+import de.inren.data.repositories.tagging.TagRepository;
 import de.inren.service.banking.TransactionSummary.TransactionSummaryType;
 
 @Service(value = "bankDataService")
@@ -74,6 +76,9 @@ public class BankDataServiceImpl implements BankDataService {
 
     @Resource
     private CategoryRepository       categoryRepository;
+
+    @Resource
+    private TagRepository       tagRepository;
 
     @Resource
     private CategoryFilterRepository categoryFilterRepository;
@@ -394,4 +399,34 @@ public class BankDataServiceImpl implements BankDataService {
         return new Sort(Sort.Direction.ASC, "valutaDate");
     }
 
+    @Override
+    public Tag save(Tag tag) {
+        return tagRepository.save(tag);
+    }
+
+    @Override
+    public void deleteTag(Tag tag) {
+        tagRepository.delete(tag);
+        
+    }
+
+    @Override
+    public void applyTagToTransactions(Tag tag) {
+        System.out.println("applyTagToTransactions(Tag "+tag+")");        
+    }
+
+    @Override
+    public void removeTagFromTransactions(Tag tag) {
+        System.out.println("removeTagFromTransactions(Tag "+tag+")");        
+    }
+
+    @Override
+    public List<String> loadAllTagNames() {
+        List<String> names = new ArrayList<>();
+        Iterable<Tag> all = tagRepository.findAll();
+        for (Tag tag : all) {
+            names.add(tag.getName());
+        }
+        return names;
+    }
 }

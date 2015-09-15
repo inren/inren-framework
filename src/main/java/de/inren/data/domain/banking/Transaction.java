@@ -17,7 +17,10 @@
 package de.inren.data.domain.banking;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,6 +44,8 @@ public class Transaction extends DomainObject {
     @Column(nullable = true)
     private String     category;
     private boolean    categoryFixed;
+    @Column(nullable = true)
+    private String     tags;
     @Column(nullable = false)
     private String     accountNumber;
     @Column(nullable = false)
@@ -186,14 +191,39 @@ public class Transaction extends DomainObject {
 
     }
 
+    public String getTags() {
+        return tags;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
+    }
+
+    public List<String> getTagList() {
+        if(tags!=null) {
+            return Arrays.asList(tags.split(":"));            
+        }
+        return new ArrayList<>();
+    }
+
+    public void setTagList(List<String> tagList) {
+        StringBuilder sb = new StringBuilder();
+        String sep ="";
+        for (String tag : tagList) {
+            sb.append(sep).append(tag);
+            sep =":";
+        }
+        this.tags = sb.toString();
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("Transaction [hashCode=").append(hashCode).append(", category=").append(category).append(", categoryFixed=").append(categoryFixed)
-                .append(", accountNumber=").append(accountNumber).append(", accountingDate=").append(accountingDate).append(", valutaDate=").append(valutaDate)
-                .append(", principal=").append(principal).append(", accountingText=").append(accountingText).append(", purpose=").append(purpose)
-                .append(", amount=").append(amount).append(", transactionCurrency=").append(transactionCurrency).append(", balance=").append(balance)
-                .append(", balanceCurrency=").append(balanceCurrency).append(", toString()=").append(super.toString()).append("]");
+                .append(", tags=").append(tags).append(", accountNumber=").append(accountNumber).append(", accountingDate=").append(accountingDate)
+                .append(", valutaDate=").append(valutaDate).append(", principal=").append(principal).append(", accountingText=").append(accountingText)
+                .append(", purpose=").append(purpose).append(", amount=").append(amount).append(", transactionCurrency=").append(transactionCurrency)
+                .append(", balance=").append(balance).append(", balanceCurrency=").append(balanceCurrency).append("]");
         return builder.toString();
     }
 

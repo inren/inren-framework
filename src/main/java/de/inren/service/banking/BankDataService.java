@@ -24,6 +24,7 @@ import java.util.List;
 import de.inren.data.domain.banking.Category;
 import de.inren.data.domain.banking.CategoryFilter;
 import de.inren.data.domain.banking.Transaction;
+import de.inren.data.domain.tagging.Tag;
 import de.inren.service.Initializable;
 import de.inren.service.banking.TransactionSummary.TransactionSummaryType;
 
@@ -56,6 +57,8 @@ public interface BankDataService extends Initializable {
     void deleteCategory(Category category);
 
     Category save(Category category);
+    
+    Tag save(Tag tag);
 
     Collection<TransactionSummary> calculateTransactionSummary(TransactionSummaryType transactionSummaryType, Date from, Date until);
 
@@ -66,5 +69,13 @@ public interface BankDataService extends Initializable {
     List<Category> findAllCategoriesForMonthReport();
 
     List<Transaction> findTransactionsByCategory(Category category);
+
+    void deleteTag(Tag tag);
+
+    void applyTagToTransactions(Tag tag);
+
+    void removeTagFromTransactions(Tag tag);
+
+    List<String> loadAllTagNames();
 
 }

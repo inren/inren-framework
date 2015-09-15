@@ -44,6 +44,7 @@ import de.inren.frontend.banking.filter.ManageCategoryFiltersPage;
 import de.inren.frontend.banking.review.CategoryReviewPage;
 import de.inren.frontend.banking.review.MonthlyReviewPage;
 import de.inren.frontend.banking.summery.TransactionSummeryPage;
+import de.inren.frontend.banking.tagging.ManageTagsPage;
 import de.inren.frontend.blogpost.BlogPostsPage;
 import de.inren.frontend.blogpost.ManageBlogPostsPage;
 import de.inren.frontend.carlogbook.CarLogEntriesUserPage;
@@ -234,6 +235,9 @@ public class NavigationProvider {
                                 new GNode<NavigationElement>(new NavigationElement(CategoryReviewPage.class, "CategoryReview.label", bankRoles,
                                         ComponentPosition.LEFT)),
                                 new GNode<NavigationElement>(new NavigationElement(ManageCategoriesPage.class, "Categories.label", bankRoles,
+                                        ComponentPosition.LEFT)),
+
+                                new GNode<NavigationElement>(new NavigationElement(ManageTagsPage.class, "Tags.label", bankRoles,
                                         ComponentPosition.LEFT)),
 
                                 new GNode<NavigationElement>(new NavigationElement(ManageCategoryFiltersPage.class, "BankFilter.label", bankRoles,
